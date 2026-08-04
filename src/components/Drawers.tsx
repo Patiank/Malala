@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Bookmark, BookmarkCheck, Sparkles, Send, MapPin, Calendar, Clock, ChevronRight, RefreshCw, Check, Edit3, Trash2, Plus, Youtube, PlayCircle, Flame, Download, ExternalLink, Share2, CheckCircle } from 'lucide-react';
 import { DrawerType, Destination, CultureItem, CulinaryItem, EventItem, FormAIResponse } from '../types';
 import { AdminPanel } from './AdminPanel';
+import { InteractiveMapModal } from './InteractiveMapModal';
 import { Language, translations } from '../lib/translations';
 
 const triggerDownload = (filename: string, content: string, mimeType: string = 'application/octet-stream') => {
@@ -716,6 +717,24 @@ export const Drawers: React.FC<DrawersProps> = ({
   const savedCultureList = cultureItems.filter((c: CultureItem) => savedIds.includes(c.id));
 
   if (!activeDrawer) return null;
+
+  if (activeDrawer === 'map') {
+    return (
+      <InteractiveMapModal
+        isOpen={true}
+        onClose={onClose}
+        lang={lang}
+        destinations={destinations}
+        cultureItems={cultureItems}
+        culinaryItems={culinaryItems}
+        eventItems={eventItems}
+        onSelectDestination={(item) => setSelectedDestination(item)}
+        onSelectCulture={(item) => setSelectedCulture(item)}
+        onSelectCulinary={(item) => setSelectedCulinary(item)}
+        onSelectEvent={(item) => setSelectedEvent(item)}
+      />
+    );
+  }
 
   return (
     <>

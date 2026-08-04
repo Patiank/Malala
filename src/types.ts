@@ -8,6 +8,7 @@ export type DrawerType =
   | 'admin'
   | 'hotinfo'       // Hot Info / Update Berita Wisata
   | 'download'      // Unduh Asset, Booklet, Leaflet, Flyer
+  | 'map'           // Peta Interaktif Sumatera Barat
   | null;
 
 export interface Destination {
@@ -31,6 +32,8 @@ export interface Destination {
   isPopular?: boolean;
   videoUrl?: string;
   mapUrl?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface CultureItem {
@@ -48,6 +51,8 @@ export interface CultureItem {
   imageUrl: string;
   videoUrl?: string;
   mapUrl?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface CulinaryItem {
@@ -65,6 +70,8 @@ export interface CulinaryItem {
   imageUrl: string;
   videoUrl?: string;
   mapUrl?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface EventItem {
@@ -80,6 +87,8 @@ export interface EventItem {
   imageUrl: string;
   videoUrl?: string;
   mapUrl?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface DownloadItem {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bookmark, Sparkles, Download, Globe, Menu, X } from 'lucide-react';
+import { Bookmark, Sparkles, Download, Map, Globe, Menu, X } from 'lucide-react';
 import { DrawerType } from '../types';
 import { Language, translations } from '../lib/translations';
 
@@ -152,6 +152,18 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Download className="w-3.5 h-3.5" />
           <span>{t.navDownloads}</span>
+        </button>
+
+        <button
+          onClick={() => handleNavClick('map')}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'map'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+          }`}
+        >
+          <Map className="w-3.5 h-3.5 text-red-500 group-hover:text-white" />
+          <span>{t.navMap}</span>
         </button>
 
         {/* UNI MALA AI Assistant Link */}

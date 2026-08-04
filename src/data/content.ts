@@ -175,6 +175,8 @@ export const DESTINATIONS: Destination[] = [
     imageUrl: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=800&q=80',
     isPopular: true,
     mapUrl: 'https://maps.google.com/?q=Jam+Gadang+Bukittinggi',
+    lat: -0.304987,
+    lng: 100.369434,
   },
   {
     id: 'd2',
@@ -196,6 +198,8 @@ export const DESTINATIONS: Destination[] = [
     imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
     isPopular: true,
     mapUrl: 'https://maps.google.com/?q=Lembah+Harau+Payakumbuh',
+    lat: -0.103000,
+    lng: 100.662000,
   },
   {
     id: 'd3',
@@ -216,6 +220,8 @@ export const DESTINATIONS: Destination[] = [
     locationDetailsEn: 'Tanjung Raya District, Agam',
     imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
     isPopular: true,
+    lat: -0.316667,
+    lng: 100.183333,
   },
   {
     id: 'd4',
@@ -236,6 +242,8 @@ export const DESTINATIONS: Destination[] = [
     locationDetailsEn: 'Mentawai Archipelago, Indian Ocean',
     imageUrl: 'https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80',
     isPopular: true,
+    lat: -2.133333,
+    lng: 99.550000,
   },
   {
     id: 'd5',
@@ -256,6 +264,8 @@ export const DESTINATIONS: Destination[] = [
     locationDetailsEn: 'Pariangan District, Tanah Datar',
     imageUrl: 'https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=80',
     isPopular: true,
+    lat: -0.450000,
+    lng: 100.490000,
   },
   {
     id: 'd6',
@@ -276,6 +286,8 @@ export const DESTINATIONS: Destination[] = [
     locationDetailsEn: 'Alahan Panjang, Solok Regency',
     imageUrl: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80',
     isPopular: false,
+    lat: -1.016667,
+    lng: 100.733333,
   },
   {
     id: 'd7',
@@ -296,6 +308,8 @@ export const DESTINATIONS: Destination[] = [
     locationDetailsEn: 'Sijunjung District, Sijunjung',
     imageUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
     isPopular: false,
+    lat: -0.720000,
+    lng: 101.000000,
   },
   {
     id: 'd8',
@@ -316,6 +330,8 @@ export const DESTINATIONS: Destination[] = [
     locationDetailsEn: 'Tarusan, Pesisir Selatan',
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
     isPopular: true,
+    lat: -1.250000,
+    lng: 100.450000,
   }
 ];
 
@@ -333,6 +349,8 @@ export const CULTURE_ITEMS: CultureItem[] = [
     origin: 'Ranah Minangkabau',
     originEn: 'Minangkabau Realm',
     imageUrl: 'https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80',
+    lat: -0.471111,
+    lng: 100.621111,
   },
   {
     id: 'c2',
@@ -347,6 +365,8 @@ export const CULTURE_ITEMS: CultureItem[] = [
     origin: 'Solok & Minangkabau',
     originEn: 'Solok & Minangkabau',
     imageUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80',
+    lat: -0.798333,
+    lng: 100.653889,
   },
   {
     id: 'c3',
@@ -361,6 +381,8 @@ export const CULTURE_ITEMS: CultureItem[] = [
     origin: 'Luhak Nan Tigo',
     originEn: 'Luhak Nan Tigo',
     imageUrl: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80',
+    lat: -0.455000,
+    lng: 100.520000,
   },
   {
     id: 'c4',
@@ -375,6 +397,8 @@ export const CULTURE_ITEMS: CultureItem[] = [
     origin: 'Pandai Sikek & Silungkang',
     originEn: 'Pandai Sikek & Silungkang',
     imageUrl: 'https://images.unsplash.com/photo-1606744837616-56c9a5c6a6eb?auto=format&fit=crop&w=800&q=80',
+    lat: -0.418333,
+    lng: 100.385000,
   },
   {
     id: 'c5',
@@ -389,6 +413,8 @@ export const CULTURE_ITEMS: CultureItem[] = [
     origin: 'Sumatera Barat',
     originEn: 'West Sumatra',
     imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
+    lat: -0.947222,
+    lng: 100.417222,
   }
 ];
 
@@ -406,6 +432,8 @@ export const CULINARY_ITEMS: CulinaryItem[] = [
     flavorProfile: 'Gurih, kaya rempah lengkuas & serai, legit, tahan lama tanpa pengawet.',
     flavorProfileEn: 'Savory, aromatic lemongrass & galangal spices, rich, naturally preserved.',
     imageUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
+    lat: -0.224444,
+    lng: 100.631667,
   },
   {
     id: 'cul2',
@@ -420,6 +448,8 @@ export const CULINARY_ITEMS: CulinaryItem[] = [
     flavorProfile: 'Pedas hangat rempah kunyit, jintan, kapulaga, & ketumbar.',
     flavorProfileEn: 'Warm spicy turmeric, cumin, cardamom, and coriander broth.',
     imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80',
+    lat: -0.468889,
+    lng: 100.398056,
   },
   {
     id: 'cul3',
@@ -434,6 +464,8 @@ export const CULINARY_ITEMS: CulinaryItem[] = [
     flavorProfile: 'Manis gurih, creamy berbuih tebal, segar tanpa bau amis.',
     flavorProfileEn: 'Sweet, savory, thick creamy foam with a fresh lime accent.',
     imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80',
+    lat: -0.950000,
+    lng: 100.353000,
   },
   {
     id: 'cul4',
@@ -448,6 +480,8 @@ export const CULINARY_ITEMS: CulinaryItem[] = [
     flavorProfile: 'Sangat gurih, asam pedas segar dari rempah kunyit dan santan kental.',
     flavorProfileEn: 'Richly savory, zesty spicy turmeric and thick coconut milk.',
     imageUrl: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80',
+    lat: -0.301000,
+    lng: 100.372000,
   },
   {
     id: 'cul5',
@@ -462,6 +496,8 @@ export const CULINARY_ITEMS: CulinaryItem[] = [
     flavorProfile: 'Perpaduan manis, gurih legit bambu, dan asam manis menyegarkan.',
     flavorProfileEn: 'Harmonious blend of sweet, aromatic smoky bamboo, and tangy fermented notes.',
     imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
+    lat: -0.456000,
+    lng: 100.580000,
   }
 ];
 
@@ -477,6 +513,8 @@ export const EVENTS_SCHEDULE: EventItem[] = [
     description: 'Atraksi budaya unik di mana joki memegang ekor dua ekor sapi sambil berlari kencang membelah sawah basah berlumpur tanpa cambuk.',
     descriptionEn: 'Spectacular traditional spectacle where a jockey holds onto the tails of two bulls racing through muddy post-harvest rice fields.',
     imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80',
+    lat: -0.450000,
+    lng: 100.510000,
   },
   {
     id: 'ev2',
@@ -489,6 +527,8 @@ export const EVENTS_SCHEDULE: EventItem[] = [
     description: 'Ajang balap sepeda internasional bergengsi gabungan olahraga dan promosi wisata alam melintasi Danau Singkarak, Kelok 44, dan Lembah Harau.',
     descriptionEn: 'Prestigious UCI international cycling race showcasing breathtaking landscapes across Lake Singkarak, Kelok 44, and Harau Valley.',
     imageUrl: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=800&q=80',
+    lat: -0.616667,
+    lng: 100.533333,
   },
   {
     id: 'ev3',
@@ -501,6 +541,8 @@ export const EVENTS_SCHEDULE: EventItem[] = [
     description: 'Upacara kolosal budaya memperingati Hari Asyura dengan mengarak menara Tabuik megah setinggi 12 meter sebelum dilarung ke lautan.',
     descriptionEn: 'Grand cultural festival carrying towering 12-meter decorative Tabuik structures before immersion into the ocean.',
     imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
+    lat: -0.625000,
+    lng: 100.120000,
   },
   {
     id: 'ev4',
@@ -513,5 +555,7 @@ export const EVENTS_SCHEDULE: EventItem[] = [
     description: 'Perlombaan terbang burung itik lokal yang terlatih terbang melintasi jarak 800 meter serta pesta kesenian tari Minang tradisi.',
     descriptionEn: 'Unique traditional racing festival featuring trained local ducks flying over distances up to 800 meters.',
     imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80',
+    lat: -0.220000,
+    lng: 100.630000,
   }
 ];

@@ -1,0 +1,434 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { X, Map, MapPin, Compass, Landmark, Utensils, Calendar, ChevronRight, Layers } from 'lucide-react';
+import L from 'leaflet';
+import { Destination, CultureItem, CulinaryItem, EventItem } from '../types';
+import { Language, translations } from '../lib/translations';
+
+interface InteractiveMapModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  lang: Language;
+  destinations: Destination[];
+  cultureItems: CultureItem[];
+  culinaryItems: CulinaryItem[];
+  eventItems: EventItem[];
+  onSelectDestination: (item: Destination) => void;
+  onSelectCulture: (item: CultureItem) => void;
+  onSelectCulinary: (item: CulinaryItem) => void;
+  onSelectEvent: (item: EventItem) => void;
+}
+
+type MapFilterCategory = 'all' | 'destinations' | 'culture' | 'culinary' | 'events';
+
+export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
+  isOpen,
+  onClose,
+  lang,
+  destinations,
+  cultureItems,
+  culinaryItems,
+  eventItems,
+  onSelectDestination,
+  onSelectCulture,
+  onSelectCulinary,
+  onSelectEvent,
+}) => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markersLayerRef = useRef<L.LayerGroup | null>(null);
+  const [activeFilter, setActiveFilter] = useState<MapFilterCategory>('all');
+
+  const isEn = lang === 'en';
+  const t = translations[lang];
+
+  // Helper to create custom HTML pin marker icons
+  const createPinIcon = (color: string, label: string, iconSymbol: string) => {
+    return L.divIcon({
+      className: 'custom-map-pin',
+      html: `
+        <div style="
+          background-color: ${color};
+          color: white;
+          padding: 5px 9px;
+          border-radius: 20px;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 10px;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          border: 2px solid #ffffff;
+          white-space: nowrap;
+          cursor: pointer;
+          transform: translate(-50%, -100%);
+        ">
+          <span>${iconSymbol}</span>
+          <span>${label}</span>
+        </div>
+      `,
+      iconSize: [0, 0],
+      iconAnchor: [0, 0],
+    });
+  };
+
+  useEffect(() => {
+    if (!isOpen || !mapContainerRef.current) return;
+
+    // Initialize Leaflet map instance centered on West Sumatra if not created yet
+    if (!mapInstanceRef.current) {
+      const map = L.map(mapContainerRef.current, {
+        center: [-0.7893, 100.6506],
+        zoom: 8,
+        zoomControl: false,
+      });
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | MALALA.travel',
+      }).addTo(map);
+
+      markersLayerRef.current = L.layerGroup().addTo(map);
+      mapInstanceRef.current = map;
+    }
+
+    const map = mapInstanceRef.current;
+    const markersGroup = markersLayerRef.current;
+
+    if (!map || !markersGroup) return;
+
+    // Clear old markers before drawing filtered set
+    markersGroup.clearLayers();
+
+    const bounds = L.latLngBounds([]);
+
+    // 1. Destinations Markers (Red Pin)
+    if (activeFilter === 'all' || activeFilter === 'destinations') {
+      destinations.forEach((item) => {
+        if (item.lat && item.lng) {
+          const title = isEn && item.titleEn ? item.titleEn : item.title;
+          const category = isEn && item.categoryEn ? item.categoryEn : item.category;
+          const regency = isEn && item.regencyEn ? item.regencyEn : item.regency;
+          const icon = createPinIcon('#dc2626', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏔️');
+
+          const marker = L.marker([item.lat, item.lng], { icon });
+          
+          const popupContent = document.createElement('div');
+          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
+          popupContent.innerHTML = `
+            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
+              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #dc2626; letter-spacing: 0.05em;">
+              📍 ${category} &bull; ${regency}
+            </div>
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
+              ${title}
+            </div>
+            <button id="btn-detail-${item.id}" style="
+              width: 100%;
+              margin-top: 8px;
+              background: #000;
+              color: #fff;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 4px;
+              font-size: 10px;
+              font-weight: 800;
+              text-transform: uppercase;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 4px;
+            ">
+              <span>${translations[lang].btnDetail}</span>
+              <span>&rarr;</span>
+            </button>
+          `;
+
+          marker.bindPopup(popupContent);
+          marker.on('popupopen', () => {
+            const btn = document.getElementById(`btn-detail-${item.id}`);
+            if (btn) {
+              btn.onclick = () => {
+                onSelectDestination(item);
+              };
+            }
+          });
+
+          markersGroup.addLayer(marker);
+          bounds.extend([item.lat, item.lng]);
+        }
+      });
+    }
+
+    // 2. Culture Markers (Purple Pin)
+    if (activeFilter === 'all' || activeFilter === 'culture') {
+      cultureItems.forEach((item) => {
+        if (item.lat && item.lng) {
+          const title = isEn && item.titleEn ? item.titleEn : item.title;
+          const category = isEn && item.categoryEn ? item.categoryEn : item.category;
+          const origin = isEn && item.originEn ? item.originEn : item.origin;
+          const icon = createPinIcon('#9333ea', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏛️');
+
+          const marker = L.marker([item.lat, item.lng], { icon });
+
+          const popupContent = document.createElement('div');
+          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
+          popupContent.innerHTML = `
+            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
+              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #9333ea; letter-spacing: 0.05em;">
+              🏛️ BUDAYA &bull; ${origin}
+            </div>
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
+              ${title}
+            </div>
+            <button id="btn-culture-${item.id}" style="
+              width: 100%;
+              margin-top: 8px;
+              background: #000;
+              color: #fff;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 4px;
+              font-size: 10px;
+              font-weight: 800;
+              text-transform: uppercase;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 4px;
+            ">
+              <span>${translations[lang].btnDetail}</span>
+              <span>&rarr;</span>
+            </button>
+          `;
+
+          marker.bindPopup(popupContent);
+          marker.on('popupopen', () => {
+            const btn = document.getElementById(`btn-culture-${item.id}`);
+            if (btn) {
+              btn.onclick = () => {
+                onSelectCulture(item);
+              };
+            }
+          });
+
+          markersGroup.addLayer(marker);
+          bounds.extend([item.lat, item.lng]);
+        }
+      });
+    }
+
+    // 3. Culinary Markers (Amber Pin)
+    if (activeFilter === 'all' || activeFilter === 'culinary') {
+      culinaryItems.forEach((item) => {
+        if (item.lat && item.lng) {
+          const title = isEn && item.titleEn ? item.titleEn : item.title;
+          const origin = isEn && item.originEn ? item.originEn : item.origin;
+          const icon = createPinIcon('#d97706', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🍲');
+
+          const marker = L.marker([item.lat, item.lng], { icon });
+
+          const popupContent = document.createElement('div');
+          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
+          popupContent.innerHTML = `
+            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
+              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #d97706; letter-spacing: 0.05em;">
+              🍲 KULINER &bull; ${origin}
+            </div>
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
+              ${title}
+            </div>
+            <button id="btn-culinary-${item.id}" style="
+              width: 100%;
+              margin-top: 8px;
+              background: #000;
+              color: #fff;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 4px;
+              font-size: 10px;
+              font-weight: 800;
+              text-transform: uppercase;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 4px;
+            ">
+              <span>${translations[lang].btnDetail}</span>
+              <span>&rarr;</span>
+            </button>
+          `;
+
+          marker.bindPopup(popupContent);
+          marker.on('popupopen', () => {
+            const btn = document.getElementById(`btn-culinary-${item.id}`);
+            if (btn) {
+              btn.onclick = () => {
+                onSelectCulinary(item);
+              };
+            }
+          });
+
+          markersGroup.addLayer(marker);
+          bounds.extend([item.lat, item.lng]);
+        }
+      });
+    }
+
+    // 4. Events Markers (Blue Pin)
+    if (activeFilter === 'all' || activeFilter === 'events') {
+      eventItems.forEach((item) => {
+        if (item.lat && item.lng) {
+          const title = isEn && item.titleEn ? item.titleEn : item.title;
+          const schedule = isEn && item.scheduleEn ? item.scheduleEn : item.schedule;
+          const icon = createPinIcon('#2563eb', title.length > 18 ? `${title.slice(0, 18)}...` : title, '📅');
+
+          const marker = L.marker([item.lat, item.lng], { icon });
+
+          const popupContent = document.createElement('div');
+          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
+          popupContent.innerHTML = `
+            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
+              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2563eb; letter-spacing: 0.05em;">
+              📅 EVENT &bull; ${schedule}
+            </div>
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
+              ${title}
+            </div>
+            <button id="btn-event-${item.id}" style="
+              width: 100%;
+              margin-top: 8px;
+              background: #000;
+              color: #fff;
+              border: none;
+              padding: 6px 12px;
+              border-radius: 4px;
+              font-size: 10px;
+              font-weight: 800;
+              text-transform: uppercase;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 4px;
+            ">
+              <span>${translations[lang].btnDetail}</span>
+              <span>&rarr;</span>
+            </button>
+          `;
+
+          marker.bindPopup(popupContent);
+          marker.on('popupopen', () => {
+            const btn = document.getElementById(`btn-event-${item.id}`);
+            if (btn) {
+              btn.onclick = () => {
+                onSelectEvent(item);
+              };
+            }
+          });
+
+          markersGroup.addLayer(marker);
+          bounds.extend([item.lat, item.lng]);
+        }
+      });
+    }
+
+    // Invalidate map size to render tiles correctly in modal container
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 200);
+
+  }, [isOpen, activeFilter, destinations, cultureItems, culinaryItems, eventItems, isEn, lang, onSelectCulture, onSelectCulinary, onSelectDestination, onSelectEvent]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6 animate-fade-in">
+      <div className="bg-white w-full max-w-6xl h-[92vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col border border-gray-200 relative">
+        
+        {/* Header Bar */}
+        <div className="px-6 py-4 border-b border-gray-200 bg-white flex items-center justify-between shrink-0">
+          <div>
+            <div className="flex items-center gap-2">
+              <Map className="w-5 h-5 text-red-600" />
+              <h2 className="font-orbitron font-extrabold text-black uppercase tracking-wider text-base sm:text-lg">
+                {t.mapTitle}
+              </h2>
+              <span className="bg-black text-white font-orbitron font-bold text-[9px] px-2 py-0.5 rounded uppercase">
+                Interactive View
+              </span>
+            </div>
+            <p className="font-jakarta text-gray-500 text-xs mt-0.5">
+              {t.mapSubtitle}
+            </p>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+            aria-label="Tutup Peta"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Category Filter Pills Top Bar */}
+        <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2 overflow-x-auto scrollbar-none font-jakarta text-xs shrink-0">
+          <span className="text-gray-400 font-bold uppercase text-[10px] tracking-wider shrink-0 flex items-center gap-1">
+            <Layers className="w-3.5 h-3.5" />
+            Filter Pin:
+          </span>
+
+          {[
+            { key: 'all', label: isEn ? 'All Locations' : 'Semua Lokasi', color: 'bg-black text-white' },
+            { key: 'destinations', label: isEn ? 'Destinations (Red Pin)' : 'Destinasi (Pin Merah)', color: 'bg-red-600 text-white' },
+            { key: 'culture', label: isEn ? 'Culture (Purple Pin)' : 'Budaya (Pin Ungu)', color: 'bg-purple-600 text-white' },
+            { key: 'culinary', label: isEn ? 'Culinary (Amber Pin)' : 'Kuliner (Pin Oranye)', color: 'bg-amber-600 text-white' },
+            { key: 'events', label: isEn ? 'Events (Blue Pin)' : 'Event (Pin Biru)', color: 'bg-blue-600 text-white' },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setActiveFilter(item.key as MapFilterCategory)}
+              className={`px-3 py-1.5 rounded-full font-bold uppercase whitespace-nowrap transition-all cursor-pointer ${
+                activeFilter === item.key
+                  ? `${item.color} shadow-xs scale-105`
+                  : 'bg-white text-gray-700 border border-gray-300 hover:border-black'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Leaflet Map Canvas Container */}
+        <div className="flex-1 w-full h-full relative bg-gray-100">
+          <div ref={mapContainerRef} className="w-full h-full z-0" />
+        </div>
+
+        {/* Footer info legend bar */}
+        <div className="px-6 py-2.5 bg-gray-900 text-white font-jakarta text-[10px] flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-4 text-gray-300">
+            <span className="flex items-center gap-1 font-semibold"><span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block" /> Wisata Alam</span>
+            <span className="flex items-center gap-1 font-semibold"><span className="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block" /> Budaya Minang</span>
+            <span className="flex items-center gap-1 font-semibold"><span className="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block" /> Rendang & Kuliner</span>
+            <span className="flex items-center gap-1 font-semibold"><span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" /> Event Festival</span>
+          </div>
+          <span className="text-gray-400 font-mono hidden sm:inline">Peta Digital Pariwisata Sumatera Barat &copy; 2026</span>
+        </div>
+      </div>
+    </div>
+  );
+};

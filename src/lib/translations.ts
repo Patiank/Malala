@@ -11,6 +11,7 @@ export const translations = {
     navSaved: 'Simpan',
     navUniMala: 'UNI MALA AI',
     navDownloads: 'Unduhan',
+    navMap: 'Peta Wisata',
     navAdmin: 'Admin',
 
     // Hero Section
@@ -44,6 +45,8 @@ export const translations = {
     eventsTitle: 'Kaledoskop Event & Festival Wisata',
     savedTitle: 'Daftar Destinasi & Favorit Anda',
     downloadTitle: 'Pusat Unduhan Media Kit & Booklet PDF',
+    mapTitle: 'Peta Interaktif Sumatera Barat',
+    mapSubtitle: 'Jelajahi Pin Lokasi Destinasi, Budaya, Kuliner & Event Minangkabau',
     savedEmpty: 'Belum ada item yang disimpan. Klik ikon bookmark pada destinasi atau kuliner untuk menyimpannya di sini.',
 
     // Common Buttons & Labels
@@ -103,6 +106,7 @@ export const translations = {
     navSaved: 'Saved',
     navUniMala: 'UNI MALA AI',
     navDownloads: 'Downloads',
+    navMap: 'Map View',
     navAdmin: 'Admin',
 
     // Hero Section
@@ -136,6 +140,8 @@ export const translations = {
     eventsTitle: 'Annual Tourism Events & Festivals',
     savedTitle: 'Your Saved Favorites',
     downloadTitle: 'Media Kit & PDF Guide Booklet Downloads',
+    mapTitle: 'West Sumatra Interactive Map',
+    mapSubtitle: 'Explore Location Pins for Destinations, Culture, Culinary & Events',
     savedEmpty: 'No saved items yet. Click the bookmark icon on any destination or culinary item to save it here.',
 
     // Common Buttons & Labels
