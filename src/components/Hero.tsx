@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowUpRight, Sparkles, Compass, MapPin, Flame, Download, Map } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowUpRight, Sparkles, Compass, MapPin, Download, Map, X } from 'lucide-react';
 import { CheckerboardGrid, WireframeGlobe, CornerBracket } from './CustomIcons';
 import { DrawerType } from '../types';
 import { Language, translations } from '../lib/translations';
@@ -11,6 +11,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
   const t = translations[lang];
+  const [isExploreModalOpen, setIsExploreModalOpen] = useState(false);
 
   return (
     <>
@@ -41,19 +42,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
             </div>
           </h1>
 
-        {/* Subtitle / Description */}
-        <p className="font-jakarta text-gray-700 max-w-xl text-xs sm:text-sm font-medium leading-relaxed pt-1">
-          {t.heroDesc}
-        </p>
+          {/* Subtitle / Description */}
+          <p className="font-jakarta text-gray-700 max-w-xl text-xs sm:text-sm font-medium leading-relaxed pt-1">
+            {t.heroDesc}
+          </p>
 
-        {/* Bottom-Left Corner Bracket */}
-        <div className="text-black pb-1">
-          <CornerBracket type="BL" />
-        </div>
+          {/* Bottom-Left Corner Bracket */}
+          <div className="text-black pb-1">
+            <CornerBracket type="BL" />
+          </div>
 
-        {/* Action Buttons Row (UNI MALA AI & Explore Menu) */}
-        <div className="flex flex-col items-start gap-4 pt-2 w-full">
-          <div className="flex items-center gap-3 flex-wrap">
+          {/* Action Buttons Row */}
+          <div className="flex items-center gap-3 flex-wrap pt-2">
             {/* UNI MALA AI Assistant Primary CTA */}
             <button
               onClick={() => onOpenDrawer('formai')}
@@ -73,10 +73,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
               />
             </button>
 
-            {/* Mulai Jelajah Main Button */}
+            {/* Mulai Jelajah Main Button - Opens Category Selection Modal */}
             <button
-              onClick={() => onOpenDrawer('destinations')}
-              className="group inline-flex items-center justify-center border border-gray-400 bg-white/80 backdrop-blur-xs rounded-md font-jakarta font-semibold uppercase tracking-[0.16em] text-black hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 cursor-pointer focus:outline-none shadow-2xs"
+              onClick={() => setIsExploreModalOpen(true)}
+              className="group inline-flex items-center justify-center border border-gray-400 bg-white/90 backdrop-blur-xs rounded-md font-jakarta font-bold uppercase tracking-[0.16em] text-black hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 cursor-pointer focus:outline-none shadow-sm"
               style={{
                 fontSize: 'var(--body)',
                 paddingInline: 'var(--btn-px)',
@@ -84,122 +84,231 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
                 gap: 'var(--btn-gap)',
               }}
             >
-              <Compass className="w-4 h-4 text-red-600 group-hover:text-white transition-colors" />
+              <Compass className="w-4.5 h-4.5 text-red-600 group-hover:text-white transition-colors animate-pulse" />
               <span>{t.heroBtnExplore}</span>
             </button>
           </div>
+        </div>
 
-          {/* Expanded Category Jelajah Bar */}
-          <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-gray-200/80 w-full max-w-3xl font-jakarta">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-500 mr-1 flex items-center gap-1">
-              <Compass className="w-3.5 h-3.5 text-red-600" />
-              <span>Kategori Jelajah:</span>
-            </span>
-
-            <button
-              onClick={() => onOpenDrawer('destinations')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-black font-bold hover:bg-red-600 hover:text-white hover:border-red-600 transition-all cursor-pointer shadow-2xs text-[11px] uppercase tracking-wider"
-            >
-              <span>🏔️</span>
-              <span>{t.navDestinations}</span>
-            </button>
-
-            <button
-              onClick={() => onOpenDrawer('culture')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-black font-bold hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all cursor-pointer shadow-2xs text-[11px] uppercase tracking-wider"
-            >
-              <span>🏛️</span>
-              <span>{t.navCulture}</span>
-            </button>
-
-            <button
-              onClick={() => onOpenDrawer('culinary')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-black font-bold hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-all cursor-pointer shadow-2xs text-[11px] uppercase tracking-wider"
-            >
-              <span>🍲</span>
-              <span>{t.navCulinary}</span>
-            </button>
-
-            <button
-              onClick={() => onOpenDrawer('events')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-black font-bold hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all cursor-pointer shadow-2xs text-[11px] uppercase tracking-wider"
-            >
-              <span>📅</span>
-              <span>{t.navEvents}</span>
-            </button>
-
-            <button
-              onClick={() => onOpenDrawer('download')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-gray-300 text-black font-bold hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all cursor-pointer shadow-2xs text-[11px] uppercase tracking-wider"
-            >
-              <Download className="w-3 h-3 text-emerald-600 group-hover:text-white" />
-              <span>{t.navDownloads}</span>
-            </button>
-
-            <button
-              onClick={() => onOpenDrawer('map')}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 border border-red-200 text-red-700 font-bold hover:bg-red-600 hover:text-white hover:border-red-600 transition-all cursor-pointer shadow-2xs text-[11px] uppercase tracking-wider"
-            >
-              <Map className="w-3 h-3 text-red-600" />
-              <span>{t.navMap}</span>
-            </button>
+        {/* Right Lower Feature Block */}
+        <div
+          className="self-start lg:self-end mt-8 lg:mt-0 relative flex flex-col justify-between"
+          style={{
+            minWidth: 'var(--feature-min)',
+            padding: 'var(--feature-pad)',
+          }}
+        >
+          {/* Absolute Corner Brackets framing the box */}
+          <div className="absolute top-0 left-0 text-black">
+            <CornerBracket type="TL" />
           </div>
-        </div>
-      </div>
+          <div className="absolute top-0 right-0 text-black">
+            <CornerBracket type="TR" />
+          </div>
+          <div className="absolute bottom-0 left-0 text-black">
+            <CornerBracket type="BL" />
+          </div>
+          <div className="absolute bottom-0 right-0 text-black">
+            <CornerBracket type="BR" />
+          </div>
 
-      {/* Right Lower Feature Block */}
-      <div
-        className="self-start lg:self-end mt-8 lg:mt-0 relative flex flex-col justify-between"
-        style={{
-          minWidth: 'var(--feature-min)',
-          padding: 'var(--feature-pad)',
-        }}
-      >
-        {/* Absolute Corner Brackets framing the box */}
-        <div className="absolute top-0 left-0 text-black">
-          <CornerBracket type="TL" />
-        </div>
-        <div className="absolute top-0 right-0 text-black">
-          <CornerBracket type="TR" />
-        </div>
-        <div className="absolute bottom-0 left-0 text-black">
-          <CornerBracket type="BL" />
-        </div>
-        <div className="absolute bottom-0 right-0 text-black">
-          <CornerBracket type="BR" />
-        </div>
-
-        {/* Globe & Official Tourism Board Metadata */}
-        <div className="flex flex-col space-y-4">
-          <div className="text-black flex items-center justify-between">
-            <WireframeGlobe />
-            <div className="flex items-center gap-1.5 text-xs font-jakarta font-semibold text-gray-500 uppercase tracking-widest bg-gray-100 px-2.5 py-1 rounded">
-              <MapPin className="w-3 h-3 text-black" />
-              <span>RANAH MINANG</span>
+          {/* Globe & Official Tourism Board Metadata */}
+          <div className="flex flex-col space-y-4">
+            <div className="text-black flex items-center justify-between">
+              <WireframeGlobe />
+              <div className="flex items-center gap-1.5 text-xs font-jakarta font-semibold text-gray-500 uppercase tracking-widest bg-gray-100 px-2.5 py-1 rounded">
+                <MapPin className="w-3 h-3 text-black" />
+                <span>RANAH MINANG</span>
+              </div>
             </div>
-          </div>
 
-          <div
-            className="font-jakarta font-bold uppercase tracking-[0.16em] text-black leading-tight"
-            style={{ fontSize: 'var(--body)' }}
-          >
-            <div>DINAS PARIWISATA</div>
             <div
-              onClick={() => onOpenDrawer('admin')}
-              className="cursor-text"
-              title=" "
+              className="font-jakarta font-bold uppercase tracking-[0.16em] text-black leading-tight"
+              style={{ fontSize: 'var(--body)' }}
             >
-              PROVINSI SUMATERA BARAT.
-            </div>
-            <div className="text-gray-500 font-normal text-xs mt-1.5 tracking-normal normal-case">
-              {lang === 'en'
-                ? 'Official Tourism Portal for West Sumatra — Land of Minangkabau Culture & Wonders.'
-                : 'Portal Resmi Pariwisata Provinsi Sumatera Barat — Surga Wisata & Budaya Minangkabau.'}
+              <div>DINAS PARIWISATA</div>
+              <div
+                onClick={() => onOpenDrawer('admin')}
+                className="cursor-text"
+                title=" "
+              >
+                PROVINSI SUMATERA BARAT.
+              </div>
+              <div className="text-gray-500 font-normal text-xs mt-1.5 tracking-normal normal-case">
+                {lang === 'en'
+                  ? 'Official Tourism Portal for West Sumatra — Land of Minangkabau Culture & Wonders.'
+                  : 'Portal Resmi Pariwisata Provinsi Sumatera Barat — Surga Wisata & Budaya Minangkabau.'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+
+      {/* Interactive Category Selector Modal (Opens upon clicking Mulai Jelajah) */}
+      {isExploreModalOpen && (
+        <div className="fixed inset-0 z-[120] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in font-jakarta">
+          <div className="bg-white w-full max-w-4xl rounded-2xl p-6 sm:p-8 shadow-2xl relative border border-gray-200 space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Compass className="w-6 h-6 text-red-600 animate-spin-slow" />
+                  <h3 className="font-orbitron font-extrabold text-lg sm:text-xl text-black uppercase tracking-wider">
+                    {lang === 'en' ? 'Explore West Sumatra Categories' : 'Pilih Kategori Jelajah Wisata'}
+                  </h3>
+                </div>
+                <p className="text-gray-500 text-xs mt-1">
+                  {lang === 'en' 
+                    ? 'Select what you want to explore in Minangkabau Land' 
+                    : 'Silakan pilih kategori pariwisata Sumatera Barat yang ingin Anda jelajahi'}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsExploreModalOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500 hover:text-black cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Grid 6 Categories */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* 1. Destinasi */}
+              <div 
+                onClick={() => { setIsExploreModalOpen(false); onOpenDrawer('destinations'); }}
+                className="group bg-gradient-to-br from-red-50 to-white border border-red-200 rounded-xl p-5 hover:shadow-lg hover:border-red-500 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-red-600 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🏔️
+                  </div>
+                  <h4 className="font-orbitron font-bold text-sm text-black uppercase tracking-wider">
+                    {t.navDestinations}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Jelajahi danau, gunung, pantai bahari, desa wisata, dan pesona alam Sumbar.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-bold text-red-600 group-hover:translate-x-1 transition-transform">
+                  <span>Buka Destinasi</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* 2. Kebudayaan */}
+              <div 
+                onClick={() => { setIsExploreModalOpen(false); onOpenDrawer('culture'); }}
+                className="group bg-gradient-to-br from-purple-50 to-white border border-purple-200 rounded-xl p-5 hover:shadow-lg hover:border-purple-500 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🏛️
+                  </div>
+                  <h4 className="font-orbitron font-bold text-sm text-black uppercase tracking-wider">
+                    {t.navCulture}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Seni tari, arsitektur Rumah Gadang, tradisi adat, dan filosofi Minangkabau.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-bold text-purple-600 group-hover:translate-x-1 transition-transform">
+                  <span>Buka Kebudayaan</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* 3. Kuliner */}
+              <div 
+                onClick={() => { setIsExploreModalOpen(false); onOpenDrawer('culinary'); }}
+                className="group bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-xl p-5 hover:shadow-lg hover:border-amber-500 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🍲
+                  </div>
+                  <h4 className="font-orbitron font-bold text-sm text-black uppercase tracking-wider">
+                    {t.navCulinary}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Kelezatan Rendang warisan UNESCO, Sate Padang, Teh Talua, & kudapan khas.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-bold text-amber-600 group-hover:translate-x-1 transition-transform">
+                  <span>Buka Kuliner</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* 4. Event */}
+              <div 
+                onClick={() => { setIsExploreModalOpen(false); onOpenDrawer('events'); }}
+                className="group bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-500 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    📅
+                  </div>
+                  <h4 className="font-orbitron font-bold text-sm text-black uppercase tracking-wider">
+                    {t.navEvents}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Jadwal festival budaya, Pacu Jawi, Tour de Singkarak, & event tahunan.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
+                  <span>Buka Jadwal Event</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* 5. Unduhan */}
+              <div 
+                onClick={() => { setIsExploreModalOpen(false); onOpenDrawer('download'); }}
+                className="group bg-gradient-to-br from-emerald-50 to-white border border-emerald-200 rounded-xl p-5 hover:shadow-lg hover:border-emerald-500 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    📥
+                  </div>
+                  <h4 className="font-orbitron font-bold text-sm text-black uppercase tracking-wider">
+                    {t.navDownloads}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Unduh media kit, leaflet wisata, dan E-Booklet panduan pariwisata PDF.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">
+                  <span>Buka Unduhan PDF</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* 6. Peta Interaktif */}
+              <div 
+                onClick={() => { setIsExploreModalOpen(false); onOpenDrawer('map'); }}
+                className="group bg-gradient-to-br from-red-100 to-white border border-red-300 rounded-xl p-5 hover:shadow-lg hover:border-red-600 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="w-10 h-10 rounded-lg bg-red-700 text-white flex items-center justify-center text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🗺️
+                  </div>
+                  <h4 className="font-orbitron font-bold text-sm text-black uppercase tracking-wider">
+                    {t.navMap}
+                  </h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Tampilan peta interaktif Minangkabau dengan lokasi realtime titik wisata.
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between text-xs font-bold text-red-700 group-hover:translate-x-1 transition-transform">
+                  <span>Buka Peta Interaktif</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
