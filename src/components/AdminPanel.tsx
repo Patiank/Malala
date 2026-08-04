@@ -287,7 +287,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
       setIsAuthenticated(true);
       setLoginError(null);
     } else {
-      setLoginError('PIN Darurat Admin salah.');
+      setLoginError('Password Darurat Admin salah.');
     }
   };
 
@@ -327,7 +327,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
               onClick={() => setShowPinInput(true)}
               className="text-[10px] text-gray-400 hover:text-black transition-colors underline uppercase tracking-wider block mx-auto cursor-pointer"
             >
-              Pop-up diblokir? Gunakan PIN Darurat Admin
+              Pop-up diblokir? Gunakan Password Darurat Admin
             </button>
           ) : (
             <form onSubmit={handlePinSubmit} className="pt-2 border-t border-gray-100 space-y-2">
@@ -335,7 +335,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 type="password"
                 value={pinCode}
                 onChange={(e) => setPinCode(e.target.value)}
-                placeholder="Masukkan PIN Darurat Admin..."
+                placeholder="Masukkan Password Darurat Admin..."
                 className="w-full bg-gray-50 border border-gray-300 rounded p-2 text-xs text-center font-mono font-bold focus:outline-none focus:border-black"
                 autoFocus
               />
@@ -343,7 +343,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 type="submit"
                 className="w-full bg-gray-900 text-white py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-black"
               >
-                Masuk dengan PIN Darurat
+                Masuk dengan Password Darurat
               </button>
             </form>
           )}
