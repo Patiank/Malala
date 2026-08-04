@@ -283,7 +283,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinCode.trim() === '7777' || pinCode.trim() === '9999') {
+    if (pinCode.trim() === '496501') {
       setIsAuthenticated(true);
       setLoginError(null);
     } else {
@@ -335,7 +335,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 type="password"
                 value={pinCode}
                 onChange={(e) => setPinCode(e.target.value)}
-                placeholder="Masukkan PIN Darurat (7777)..."
+                placeholder="Masukkan PIN Darurat Admin..."
                 className="w-full bg-gray-50 border border-gray-300 rounded p-2 text-xs text-center font-mono font-bold focus:outline-none focus:border-black"
                 autoFocus
               />
