@@ -60,12 +60,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('malala_allowed_admin_emails');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       } catch (e) {
         console.warn('Failed to parse allowed admin emails:', e);
       }
     }
-    return [];
+    return ['patiank@gmail.com'];
   });
   const [newAdminEmail, setNewAdminEmail] = useState<string>('');
 
@@ -82,7 +85,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
 
   const checkIsEmailAllowed = (email: string | null | undefined): boolean => {
     if (!email) return false;
-    if (!allowedAdminEmails || allowedAdminEmails.length === 0) return true;
+    if (!allowedAdminEmails || allowedAdminEmails.length === 0) return false;
     return allowedAdminEmails.some((e) => e.toLowerCase().trim() === email.toLowerCase().trim());
   };
 
