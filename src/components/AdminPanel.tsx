@@ -67,7 +67,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
         console.warn('Failed to parse allowed admin emails:', e);
       }
     }
-    return ['patiank@gmail.com'];
+    return ['aldoaldiles@gmail.com', 'patiank@gmail.com'];
   });
   const [newAdminEmail, setNewAdminEmail] = useState<string>('');
 
