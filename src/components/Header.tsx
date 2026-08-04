@@ -64,10 +64,19 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3 md:hidden">
           <button
             onClick={onToggleLang}
-            className="inline-flex items-center gap-1 px-2 py-1 rounded border border-gray-300 bg-gray-50 hover:bg-black hover:text-white transition-all cursor-pointer font-bold text-[10px] tracking-wider uppercase font-jakarta"
+            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full border border-gray-300 bg-white hover:border-black transition-all cursor-pointer font-jakarta shadow-2xs"
+            title={lang === 'id' ? 'Switch to English' : 'Ganti ke Bahasa Indonesia'}
           >
-            <Globe className="w-3 h-3 text-gray-500" />
-            <span>{lang === 'id' ? 'ID' : 'EN'}</span>
+            <Globe className="w-3.5 h-3.5 text-red-600" />
+            <div className="flex items-center gap-0.5 text-[10px] font-extrabold tracking-wider uppercase">
+              <span className={`px-1 py-0.2 rounded ${lang === 'id' ? 'bg-black text-white' : 'text-gray-400'}`}>
+                ID
+              </span>
+              <span className="text-gray-300 font-normal">|</span>
+              <span className={`px-1 py-0.2 rounded ${lang === 'en' ? 'bg-black text-white' : 'text-gray-400'}`}>
+                EN
+              </span>
+            </div>
           </button>
           
           <button
@@ -180,14 +189,22 @@ export const Header: React.FC<HeaderProps> = ({
 
         <span className="text-gray-300 font-light select-none hidden md:inline">|</span>
 
-        {/* Desktop Language Switcher Button */}
+        {/* Desktop Language Switcher Button with Globe Logo & ID | EN Side-By-Side */}
         <button
           onClick={onToggleLang}
-          className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded border border-gray-300 bg-gray-50 hover:bg-black hover:text-white hover:border-black transition-all cursor-pointer font-bold text-[10px] tracking-wider uppercase font-jakarta"
+          className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-gray-300 bg-white hover:border-black transition-all cursor-pointer font-jakarta shadow-2xs group"
           title={lang === 'id' ? 'Switch to English' : 'Ganti ke Bahasa Indonesia'}
         >
-          <Globe className="w-3 h-3 text-gray-500 group-hover:text-white" />
-          <span>{lang === 'id' ? 'ID' : 'EN'}</span>
+          <Globe className="w-3.5 h-3.5 text-red-600 transition-transform group-hover:rotate-12" />
+          <div className="flex items-center gap-1 text-[10px] font-extrabold tracking-wider uppercase">
+            <span className={`px-1.5 py-0.5 rounded transition-colors ${lang === 'id' ? 'bg-black text-white font-black' : 'text-gray-500 group-hover:text-black'}`}>
+              ID
+            </span>
+            <span className="text-gray-300 font-normal">|</span>
+            <span className={`px-1.5 py-0.5 rounded transition-colors ${lang === 'en' ? 'bg-black text-white font-black' : 'text-gray-500 group-hover:text-black'}`}>
+              EN
+            </span>
+          </div>
         </button>
 
         {/* Desktop Favorites Bookmark Icon Button */}
