@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpRight, Sparkles, Compass, MapPin, Download, Map, X } from 'lucide-react';
+import { ArrowUpRight, Sparkles, Compass, Download, Map, X } from 'lucide-react';
 import { CheckerboardGrid, WireframeGlobe, CornerBracket } from './CustomIcons';
 import { DrawerType } from '../types';
 import { Language, translations } from '../lib/translations';
@@ -112,14 +112,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
             <CornerBracket type="BR" />
           </div>
 
-          {/* Globe & Official Tourism Board Metadata */}
+          {/* Official Tourism Board Metadata */}
           <div className="flex flex-col space-y-4">
             <div className="text-black flex items-center justify-between">
               <WireframeGlobe />
-              <div className="flex items-center gap-1.5 text-xs font-jakarta font-semibold text-gray-500 uppercase tracking-widest bg-gray-100 px-2.5 py-1 rounded">
-                <MapPin className="w-3 h-3 text-black" />
-                <span>RANAH MINANG</span>
-              </div>
             </div>
 
             <div
