@@ -165,11 +165,12 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('map')}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-bold transition-all duration-200 cursor-pointer group shadow-2xs ${
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-semibold uppercase tracking-[0.14em] sm:tracking-[0.18em] transition-all duration-200 cursor-pointer group shadow-2xs ${
             activeDrawer === 'map'
               ? 'bg-red-600 text-white border-red-600'
               : 'bg-emerald-600 text-white border-emerald-600 hover:bg-red-600 hover:border-red-600'
           }`}
+          style={{ fontSize: 'var(--nav)' }}
         >
           <Map className="w-3.5 h-3.5 text-white transition-colors" />
           <span>{t.navMap}</span>
@@ -178,12 +179,13 @@ export const Header: React.FC<HeaderProps> = ({
         {/* UNI MALA AI Assistant Link */}
         <button
           onClick={() => handleNavClick('formai')}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-black text-white hover:bg-gray-800 transition-all cursor-pointer font-extrabold text-[11px] sm:text-xs tracking-wider uppercase ${
-            activeDrawer === 'formai' ? 'ring-2 ring-offset-1 ring-black shadow-md' : 'shadow-2xs'
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-semibold uppercase tracking-[0.14em] sm:tracking-[0.18em] bg-black text-white border-black hover:bg-gray-800 hover:border-gray-800 transition-all duration-200 cursor-pointer shadow-2xs ${
+            activeDrawer === 'formai' ? 'ring-2 ring-offset-1 ring-black shadow-md' : ''
           }`}
+          style={{ fontSize: 'var(--nav)' }}
         >
           <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
-          <span className="font-orbitron tracking-widest">{t.navUniMala}</span>
+          <span>{t.navUniMala}</span>
         </button>
 
         <span className="text-gray-300 font-light select-none hidden md:inline">|</span>
