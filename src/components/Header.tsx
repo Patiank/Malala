@@ -165,13 +165,13 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('map')}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer group ${
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border font-bold transition-all duration-200 cursor-pointer group shadow-2xs ${
             activeDrawer === 'map'
-              ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
+              ? 'bg-red-600 text-white border-red-600'
+              : 'bg-emerald-600 text-white border-emerald-600 hover:bg-red-600 hover:border-red-600'
           }`}
         >
-          <Map className="w-3.5 h-3.5 text-red-500 group-hover:text-white transition-colors" />
+          <Map className="w-3.5 h-3.5 text-white transition-colors" />
           <span>{t.navMap}</span>
         </button>
 

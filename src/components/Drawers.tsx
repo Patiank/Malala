@@ -871,10 +871,10 @@ export const Drawers: React.FC<DrawersProps> = ({
 
                 <button
                   onClick={() => onOpenDrawer?.('map')}
-                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center shadow-2xs ${
                     activeDrawer === 'map'
-                      ? 'bg-red-700 text-white shadow-xs font-extrabold'
-                      : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-600 hover:text-white'
+                      ? 'bg-red-600 text-white shadow-xs font-extrabold border border-red-600'
+                      : 'bg-emerald-600 text-white border border-emerald-600 hover:bg-red-600 hover:border-red-600'
                   }`}
                 >
                   <span className="text-xs">🗺️</span>
