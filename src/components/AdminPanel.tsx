@@ -52,10 +52,39 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   const [adminError, setAdminError] = useState<string | null>(null);
   const [adminSuccess, setAdminSuccess] = useState<string | null>(null);
   
-  // Auth state
+  // Auth state & Admin Whitelist
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [allowedAdminEmails, setAllowedAdminEmails] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('malala_allowed_admin_emails');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+        console.warn('Failed to parse allowed admin emails:', e);
+      }
+    }
+    return [];
+  });
+  const [newAdminEmail, setNewAdminEmail] = useState<string>('');
+
+  // Sync allowed admin emails to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('malala_allowed_admin_emails', JSON.stringify(allowedAdminEmails));
+      } catch (e) {
+        console.warn('Failed to save admin emails:', e);
+      }
+    }
+  }, [allowedAdminEmails]);
+
+  const checkIsEmailAllowed = (email: string | null | undefined): boolean => {
+    if (!email) return false;
+    if (!allowedAdminEmails || allowedAdminEmails.length === 0) return true;
+    return allowedAdminEmails.some((e) => e.toLowerCase().trim() === email.toLowerCase().trim());
+  };
 
   const getActiveData = () => {
     switch (adminTab) {
@@ -192,13 +221,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   const activeData = getActiveData();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setIsAuthenticated(true);
+        if (checkIsEmailAllowed(user.email)) {
+          setIsAuthenticated(true);
+          setLoginError(null);
+        } else {
+          await signOut(auth);
+          setIsAuthenticated(false);
+          setLoginError(`Akses Ditolak: Email '${user.email}' tidak terdaftar sebagai Admin MALALA.`);
+        }
       }
     });
     return () => unsub();
-  }, []);
+  }, [allowedAdminEmails]);
 
   const handlePasswordLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,8 +250,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
     try {
       setLoginError(null);
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      setLoginError(null);
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        if (checkIsEmailAllowed(result.user.email)) {
+          setIsAuthenticated(true);
+          setLoginError(null);
+        } else {
+          await signOut(auth);
+          setIsAuthenticated(false);
+          setLoginError(`Akses Ditolak: Email '${result.user.email}' tidak terdaftar sebagai Admin MALALA.`);
+        }
+      }
     } catch (error: any) {
       console.warn("Google Auth popup error:", error);
       if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/cancelled-popup-request') {
@@ -498,6 +543,76 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
               >
                 <Check className="w-4 h-4" /> Simpan Pengaturan Latar Belakang
               </button>
+            </div>
+
+            {/* Admin Whitelist Emails Section */}
+            <div className="bg-white border border-gray-200 p-4 rounded-md space-y-3 mt-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase text-gray-800 mb-1">
+                  🛡️ Daftar Email Admin Resmi (Google Whitelist)
+                </label>
+                <p className="text-[10px] text-gray-500 mb-3">
+                  Masukkan alamat email Google/Gmail yang diizinkan untuk login ke Admin Panel. Jika daftar ini diisi, hanya pemilik email terdaftar yang diperbolehkan masuk.
+                </p>
+
+                <div className="flex gap-2 mb-3">
+                  <input
+                    type="email"
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                    placeholder="masukkan.email@gmail.com..."
+                    className="flex-1 bg-white border border-gray-300 rounded p-2 text-xs font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newAdminEmail.trim() || !newAdminEmail.includes('@')) return;
+                      const emailClean = newAdminEmail.trim().toLowerCase();
+                      if (!allowedAdminEmails.includes(emailClean)) {
+                        setAllowedAdminEmails((prev) => [...prev, emailClean]);
+                        showSuccess(`Email '${emailClean}' berhasil ditambahkan ke Whitelist Admin!`);
+                      }
+                      setNewAdminEmail('');
+                    }}
+                    className="bg-black text-white px-3 py-1.5 rounded text-xs font-bold uppercase hover:bg-gray-800 transition-colors cursor-pointer shrink-0"
+                  >
+                    Tambah Email
+                  </button>
+                </div>
+
+                {allowedAdminEmails.length === 0 ? (
+                  <div className="p-2.5 bg-amber-50 border border-amber-200 rounded text-[11px] text-amber-800 font-jakarta">
+                    ℹ️ <strong>Belum ada email yang dibatasi:</strong> Semua akun Google saat ini diizinkan login. Tambahkan email di atas untuk mengaktifkan pembatasan keamanan.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold uppercase text-gray-500 block">
+                      Email Admin Terdaftar ({allowedAdminEmails.length}):
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {allowedAdminEmails.map((email) => (
+                        <span
+                          key={email}
+                          className="inline-flex items-center gap-1.5 bg-gray-100 border border-gray-300 text-gray-800 text-xs px-2.5 py-1 rounded-full font-mono font-semibold"
+                        >
+                          <span>{email}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAllowedAdminEmails((prev) => prev.filter((e) => e !== email));
+                              showSuccess(`Email '${email}' telah dihapus dari Whitelist Admin.`);
+                            }}
+                            className="text-gray-400 hover:text-red-600 font-bold ml-1 transition-colors cursor-pointer"
+                            title="Hapus Email"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ) : editingId ? (
