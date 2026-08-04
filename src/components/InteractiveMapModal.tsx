@@ -149,100 +149,133 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
       return container;
     };
 
+    // Helper to get GPS coordinates with smart text matching fallback
+    const getCoordinates = (item: any) => {
+      const lat = Number(item.lat);
+      const lng = Number(item.lng);
+      if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+        return { lat, lng };
+      }
+
+      const text = `${item.regency || ''} ${item.location || ''} ${item.origin || ''} ${item.title || ''}`.toLowerCase();
+      
+      if (text.includes('bukittinggi') || text.includes('agam') || text.includes('lawang') || text.includes('kapau')) 
+        return { lat: -0.304987, lng: 100.369434 };
+      if (text.includes('harau') || text.includes('payakumbuh') || text.includes('lima puluh kota') || text.includes('itik')) 
+        return { lat: -0.103000, lng: 100.662000 };
+      if (text.includes('tanah datar') || text.includes('pariangan') || text.includes('batusangkar') || text.includes('pagaruyung') || text.includes('pacu jawi') || text.includes('lamang')) 
+        return { lat: -0.450000, lng: 100.490000 };
+      if (text.includes('pariaman') || text.includes('tabuik')) 
+        return { lat: -0.625000, lng: 100.120000 };
+      if (text.includes('mentawai')) 
+        return { lat: -2.133333, lng: 99.550000 };
+      if (text.includes('solok') || text.includes('alahan panjang') || text.includes('singkarak') || text.includes('tour de singkarak')) 
+        return { lat: -0.798333, lng: 100.653889 };
+      if (text.includes('padang panjang')) 
+        return { lat: -0.468889, lng: 100.398056 };
+      if (text.includes('sijunjung') || text.includes('silokek')) 
+        return { lat: -0.720000, lng: 101.000000 };
+      if (text.includes('pesisir selatan') || text.includes('mandeh') || text.includes('carocok')) 
+        return { lat: -1.250000, lng: 100.450000 };
+      if (text.includes('padang')) 
+        return { lat: -0.947222, lng: 100.417222 };
+
+      const hash = (item.id || item.title || '').split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+      const jitterLat = ((hash % 100) - 50) * 0.005;
+      const jitterLng = (((hash * 7) % 100) - 50) * 0.005;
+      return { lat: -0.7893 + jitterLat, lng: 100.6506 + jitterLng };
+    };
+
     // 1. Destinations Markers (Red Pin)
     if (activeFilter === 'all' || activeFilter === 'destinations') {
       destinations.forEach((item) => {
-        if (item.lat && item.lng) {
-          const title = isEn && item.titleEn ? item.titleEn : item.title;
-          const category = isEn && item.categoryEn ? item.categoryEn : item.category;
-          const regency = isEn && item.regencyEn ? item.regencyEn : item.regency;
-          const icon = createPinIcon('#dc2626', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏔️');
+        const coords = getCoordinates(item);
+        const title = isEn && item.titleEn ? item.titleEn : item.title;
+        const category = isEn && item.categoryEn ? item.categoryEn : item.category;
+        const regency = isEn && item.regencyEn ? item.regencyEn : item.regency;
+        const icon = createPinIcon('#dc2626', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏔️');
 
-          const marker = L.marker([item.lat, item.lng], { icon });
-          const popupEl = buildPopupContent(
-            item.imageUrl,
-            `📍 ${category} • ${regency}`,
-            '#dc2626',
-            title,
-            () => onSelectDestination(item)
-          );
+        const marker = L.marker([coords.lat, coords.lng], { icon });
+        const popupEl = buildPopupContent(
+          item.imageUrl,
+          `📍 ${category} • ${regency}`,
+          '#dc2626',
+          title,
+          () => onSelectDestination(item)
+        );
 
-          marker.bindPopup(popupEl);
-          markersGroup.addLayer(marker);
-          bounds.extend([item.lat, item.lng]);
-        }
+        marker.bindPopup(popupEl);
+        markersGroup.addLayer(marker);
+        bounds.extend([coords.lat, coords.lng]);
       });
     }
 
     // 2. Culture Markers (Purple Pin)
     if (activeFilter === 'all' || activeFilter === 'culture') {
       cultureItems.forEach((item) => {
-        if (item.lat && item.lng) {
-          const title = isEn && item.titleEn ? item.titleEn : item.title;
-          const origin = isEn && item.originEn ? item.originEn : item.origin;
-          const icon = createPinIcon('#9333ea', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏛️');
+        const coords = getCoordinates(item);
+        const title = isEn && item.titleEn ? item.titleEn : item.title;
+        const origin = isEn && item.originEn ? item.originEn : item.origin;
+        const icon = createPinIcon('#9333ea', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏛️');
 
-          const marker = L.marker([item.lat, item.lng], { icon });
-          const popupEl = buildPopupContent(
-            item.imageUrl,
-            `🏛️ BUDAYA • ${origin}`,
-            '#9333ea',
-            title,
-            () => onSelectCulture(item)
-          );
+        const marker = L.marker([coords.lat, coords.lng], { icon });
+        const popupEl = buildPopupContent(
+          item.imageUrl,
+          `🏛️ BUDAYA • ${origin}`,
+          '#9333ea',
+          title,
+          () => onSelectCulture(item)
+        );
 
-          marker.bindPopup(popupEl);
-          markersGroup.addLayer(marker);
-          bounds.extend([item.lat, item.lng]);
-        }
+        marker.bindPopup(popupEl);
+        markersGroup.addLayer(marker);
+        bounds.extend([coords.lat, coords.lng]);
       });
     }
 
     // 3. Culinary Markers (Amber Pin)
     if (activeFilter === 'all' || activeFilter === 'culinary') {
       culinaryItems.forEach((item) => {
-        if (item.lat && item.lng) {
-          const title = isEn && item.titleEn ? item.titleEn : item.title;
-          const origin = isEn && item.originEn ? item.originEn : item.origin;
-          const icon = createPinIcon('#d97706', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🍲');
+        const coords = getCoordinates(item);
+        const title = isEn && item.titleEn ? item.titleEn : item.title;
+        const origin = isEn && item.originEn ? item.originEn : item.origin;
+        const icon = createPinIcon('#d97706', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🍲');
 
-          const marker = L.marker([item.lat, item.lng], { icon });
-          const popupEl = buildPopupContent(
-            item.imageUrl,
-            `🍲 KULINER • ${origin}`,
-            '#d97706',
-            title,
-            () => onSelectCulinary(item)
-          );
+        const marker = L.marker([coords.lat, coords.lng], { icon });
+        const popupEl = buildPopupContent(
+          item.imageUrl,
+          `🍲 KULINER • ${origin}`,
+          '#d97706',
+          title,
+          () => onSelectCulinary(item)
+        );
 
-          marker.bindPopup(popupEl);
-          markersGroup.addLayer(marker);
-          bounds.extend([item.lat, item.lng]);
-        }
+        marker.bindPopup(popupEl);
+        markersGroup.addLayer(marker);
+        bounds.extend([coords.lat, coords.lng]);
       });
     }
 
     // 4. Events Markers (Blue Pin)
     if (activeFilter === 'all' || activeFilter === 'events') {
       eventItems.forEach((item) => {
-        if (item.lat && item.lng) {
-          const title = isEn && item.titleEn ? item.titleEn : item.title;
-          const schedule = isEn && item.scheduleEn ? item.scheduleEn : item.schedule;
-          const icon = createPinIcon('#2563eb', title.length > 18 ? `${title.slice(0, 18)}...` : title, '📅');
+        const coords = getCoordinates(item);
+        const title = isEn && item.titleEn ? item.titleEn : item.title;
+        const schedule = isEn && item.scheduleEn ? item.scheduleEn : item.schedule;
+        const icon = createPinIcon('#2563eb', title.length > 18 ? `${title.slice(0, 18)}...` : title, '📅');
 
-          const marker = L.marker([item.lat, item.lng], { icon });
-          const popupEl = buildPopupContent(
-            item.imageUrl,
-            `📅 EVENT • ${schedule}`,
-            '#2563eb',
-            title,
-            () => onSelectEvent(item)
-          );
+        const marker = L.marker([coords.lat, coords.lng], { icon });
+        const popupEl = buildPopupContent(
+          item.imageUrl,
+          `📅 EVENT • ${schedule}`,
+          '#2563eb',
+          title,
+          () => onSelectEvent(item)
+        );
 
-          marker.bindPopup(popupEl);
-          markersGroup.addLayer(marker);
-          bounds.extend([item.lat, item.lng]);
-        }
+        marker.bindPopup(popupEl);
+        markersGroup.addLayer(marker);
+        bounds.extend([coords.lat, coords.lng]);
       });
     }
 
