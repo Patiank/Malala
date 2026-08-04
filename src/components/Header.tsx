@@ -102,8 +102,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => handleNavClick('destinations')}
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'destinations'
-              ? 'bg-black text-white border-black font-bold'
-              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
         >
           {t.navDestinations}
@@ -113,8 +113,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => handleNavClick('culture')}
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'culture'
-              ? 'bg-black text-white border-black font-bold'
-              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
         >
           {t.navCulture}
@@ -124,8 +124,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => handleNavClick('culinary')}
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'culinary'
-              ? 'bg-black text-white border-black font-bold'
-              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
         >
           {t.navCulinary}
@@ -135,8 +135,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => handleNavClick('events')}
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'events'
-              ? 'bg-black text-white border-black font-bold'
-              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
         >
           {t.navEvents}
@@ -146,8 +146,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => handleNavClick('download')}
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'download'
-              ? 'bg-black text-white border-black font-bold'
-              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
         >
           <Download className="w-3.5 h-3.5" />
@@ -156,13 +156,13 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('map')}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer group ${
             activeDrawer === 'map'
               ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
+              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
         >
-          <Map className="w-3.5 h-3.5 text-red-500 group-hover:text-white" />
+          <Map className="w-3.5 h-3.5 text-red-500 group-hover:text-white transition-colors" />
           <span>{t.navMap}</span>
         </button>
 
