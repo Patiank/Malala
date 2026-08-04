@@ -1,0 +1,6 @@
+{
+  "name": "MALALA — West Sumatra Tourism Board",
+  "description": "Official award-winning tourism portal for West Sumatra (Dinas Pariwisata Provinsi Sumatera Barat).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,188 @@
+export type Language = 'id' | 'en';
+
+export const translations = {
+  id: {
+    // Header & Nav
+    logoTagline: 'Panduan Wisata Sumbar Berbasis AI',
+    navDestinations: 'Destinasi',
+    navCulture: 'Kebudayaan',
+    navCulinary: 'Kuliner',
+    navEvents: 'Event',
+    navSaved: 'Simpan',
+    navUniMala: 'UNI MALA AI',
+    navDownloads: 'Unduhan',
+    navAdmin: 'Admin',
+
+    // Hero Section
+    heroBadge: 'Sistem Rekomendasi Pariwisata Sumbar',
+    heroSubtitle: 'Panduan Pariwisata Sumatera Barat Berbasis AI Interaktif',
+    heroDesc: 'Jelajahi keindahan alam, kekayaan budaya Minangkabau, kelezatan kuliner rendang, serta festival tahunan dengan asisten kecerdasan buatan Uni Mala.',
+    heroBtnExplore: 'Mulai Jelajah',
+    heroBtnAiPlanner: 'Rencanakan dengan AI',
+
+    // Uni Mala AI Form & Drawer
+    aiTitle: 'UNI MALA AI - Asisten Perencana Wisata',
+    aiSubtitle: 'Rencanakan itinerary perjalanan liburan Sumatera Barat Anda secara personal & otomatis.',
+    fieldDays: 'Durasi Liburan (Hari)',
+    fieldTravelers: 'Jumlah Wisatawan',
+    fieldBudget: 'Estimasi Anggaran Per Orang',
+    fieldStyle: 'Gaya Perjalanan',
+    fieldInterests: 'Minat Utama',
+    fieldNotes: 'Catatan Khusus / Permintaan Spesial',
+    btnGenerate: 'Buat Rencana Wisata Sekarang',
+    btnGenerating: 'Menganalisis & Menyusun Itinerary...',
+    btnPrintA4: 'Unduh Rencana Wisata A4 (PDF / Cetak)',
+    aiPromptLang: 'Tolong berikan jawaban dan itinerary dalam Bahasa Indonesia yang ramah dan lengkap.',
+    chatError: 'Maaf, terjadi masalah saat menghubungi UNI MALA AI. Mohon coba lagi beberapa saat.',
+    chatInitial: 'Saluang & Ranah Minang! Saya UNI MALA AI Sumbar, asisten resmi pariwisata Sumatera Barat. Ada yang bisa saya bantu terkait destinasi wisata, kuliner Rendang, atau kebudayaan Minangkabau?',
+    chatInputPlaceholder: 'Tanya UNI MALA (cth: "Apa makanan khas Bukittinggi?")...',
+
+    // Drawers & Titles
+    destinationsTitle: 'Destinasi Wisata Unggulan',
+    cultureTitle: 'Kekayaan Budaya & Seni Minangkabau',
+    culinaryTitle: 'Wisata Kuliner Khas Sumatera Barat',
+    eventsTitle: 'Kaledoskop Event & Festival Wisata',
+    savedTitle: 'Daftar Destinasi & Favorit Anda',
+    downloadTitle: 'Pusat Unduhan Media Kit & Booklet PDF',
+    savedEmpty: 'Belum ada item yang disimpan. Klik ikon bookmark pada destinasi atau kuliner untuk menyimpannya di sini.',
+
+    // Common Buttons & Labels
+    searchPlaceholder: 'Cari destinasi, lokasi, atau makanan...',
+    btnSave: 'Simpan',
+    btnSaved: 'Tersimpan',
+    btnClose: 'Tutup',
+    btnDetail: 'Lihat Detail',
+    hotInfoTitle: 'Hot Info & Update Jalur Wisata',
+    btnMap: 'Lokasi / Google Maps',
+    btnOpenMap: 'Buka di Google Maps',
+    
+    // Categories
+    catAll: 'Semua',
+    catLakeMountain: 'Danau & Gunung',
+    catValleyGeopark: 'Lembah & Geopark',
+    catBeachMarine: 'Pantai & Bahari',
+    catVillage: 'Desa Wisata',
+    catCultureFestival: 'Festival Budaya',
+    catSportTourism: 'Sport Tourism',
+    catExhibition: 'Pameran & Bazaar',
+    catCulinaryHeavy: 'Makanan Berat',
+    catCulinarySnack: 'Cemilan & Minuman',
+    
+    // FormAI Tabs
+    tabGenerator: 'Generator Itinerary AI',
+    tabChat: 'Tanya Uni Mala Guide',
+    
+    // FormAI Fields
+    fieldDaysForm: 'Durasi Wisata (Hari)',
+    fieldTravelerType: 'Kategori Wisatawan',
+    fieldNumPeople: 'Jumlah Orang',
+    fieldInterestsForm: 'Preferensi Minat (Bisa Pilih Banyak)',
+    fieldActivityLevel: 'Tingkat Aktivitas',
+    fieldBudgetForm: 'Rentang Budget',
+    fieldAllergies: 'Kebutuhan Khusus / Alergi Makanan',
+    fieldAllergiesPlaceholder: 'Contoh: alergi udang, butuh akses kursi roda...',
+    optSolo: 'Individu / Solo',
+    optCouple: 'Pasangan',
+    optFamilyKids: 'Keluarga dengan Anak',
+    optFamilyElders: 'Keluarga dengan Lansia',
+    optGroup: 'Rombongan Besar',
+    optRelaxed: 'Santai / Relaxed',
+    optModerate: 'Sedang / Moderate',
+    optExtreme: 'Ekstrem / Adventure',
+    optBudget: 'Hemat (Backpacker)',
+    optStandard: 'Menengah (Standard)',
+    optPremium: 'Mewah (Premium / Resort)',
+  },
+  en: {
+    // Header & Nav
+    logoTagline: 'West Sumatra AI Tourism Guide',
+    navDestinations: 'Destinations',
+    navCulture: 'Culture',
+    navCulinary: 'Culinary',
+    navEvents: 'Events',
+    navSaved: 'Saved',
+    navUniMala: 'UNI MALA AI',
+    navDownloads: 'Downloads',
+    navAdmin: 'Admin',
+
+    // Hero Section
+    heroBadge: 'West Sumatra Tourism Recommendation Engine',
+    heroSubtitle: 'Interactive AI-Powered West Sumatra Tourism Guide',
+    heroDesc: 'Explore natural wonderlands, rich Minangkabau heritage, authentic rendang culinary delights, and annual vibrant festivals with AI assistant Uni Mala.',
+    heroBtnExplore: 'Start Exploring',
+    heroBtnAiPlanner: 'Plan with AI',
+
+    // Uni Mala AI Form & Drawer
+    aiTitle: 'UNI MALA AI - Smart Travel Assistant',
+    aiSubtitle: 'Generate your personalized West Sumatra trip itinerary instantly powered by AI.',
+    fieldDays: 'Trip Duration (Days)',
+    fieldTravelers: 'Number of Travelers',
+    fieldBudget: 'Budget per Person',
+    fieldStyle: 'Travel Style',
+    fieldInterests: 'Main Interests',
+    fieldNotes: 'Special Requests / Notes',
+    btnGenerate: 'Generate Trip Itinerary Now',
+    btnGenerating: 'Analyzing & Crafting Itinerary...',
+    btnPrintA4: 'Download A4 Trip Plan (PDF / Print)',
+    aiPromptLang: 'Please provide the complete answer and itinerary in clear, friendly English.',
+    chatError: 'Sorry, there was an issue contacting UNI MALA AI. Please try again in a moment.',
+    chatInitial: 'Saluang & Ranah Minang! I am UNI MALA AI, the official tourism assistant of West Sumatra. How can I assist you with tourist destinations, authentic Rendang, or Minangkabau culture?',
+    chatInputPlaceholder: 'Ask UNI MALA (e.g. "What is the best food in Bukittinggi?")...',
+
+    // Drawers & Titles
+    destinationsTitle: 'Featured Tourist Destinations',
+    cultureTitle: 'Minangkabau Cultural & Heritage Highlights',
+    culinaryTitle: 'Authentic West Sumatra Culinary Guide',
+    eventsTitle: 'Annual Tourism Events & Festivals',
+    savedTitle: 'Your Saved Favorites',
+    downloadTitle: 'Media Kit & PDF Guide Booklet Downloads',
+    savedEmpty: 'No saved items yet. Click the bookmark icon on any destination or culinary item to save it here.',
+
+    // Common Buttons & Labels
+    searchPlaceholder: 'Search destinations, spots, or local food...',
+    btnSave: 'Save',
+    btnSaved: 'Saved',
+    btnClose: 'Close',
+    btnDetail: 'View Details',
+    hotInfoTitle: 'Hot Info & Live Travel Updates',
+    btnMap: 'Location / Google Maps',
+    btnOpenMap: 'Open in Google Maps',
+
+    // Categories
+    catAll: 'All',
+    catLakeMountain: 'Lakes & Mountains',
+    catValleyGeopark: 'Valleys & Geoparks',
+    catBeachMarine: 'Beaches & Marine',
+    catVillage: 'Heritage Villages',
+    catCultureFestival: 'Cultural Festivals',
+    catSportTourism: 'Sport Tourism',
+    catExhibition: 'Exhibitions & Bazaars',
+    catCulinaryHeavy: 'Main Course',
+    catCulinarySnack: 'Snacks & Beverages',
+    
+    // FormAI Tabs
+    tabGenerator: 'AI Itinerary Generator',
+    tabChat: 'Ask Uni Mala Guide',
+
+    // FormAI Fields
+    fieldDaysForm: 'Trip Duration (Days)',
+    fieldTravelerType: 'Traveler Category',
+    fieldNumPeople: 'Number of People',
+    fieldInterestsForm: 'Interests (Select Multiple)',
+    fieldActivityLevel: 'Activity Level',
+    fieldBudgetForm: 'Budget Range',
+    fieldAllergies: 'Special Needs / Food Allergies',
+    fieldAllergiesPlaceholder: 'Example: shellfish allergy, wheelchair access...',
+    optSolo: 'Solo Traveler',
+    optCouple: 'Couple',
+    optFamilyKids: 'Family with Kids',
+    optFamilyElders: 'Family with Elderly',
+    optGroup: 'Large Group',
+    optRelaxed: 'Relaxed',
+    optModerate: 'Moderate',
+    optExtreme: 'Adventure / Extreme',
+    optBudget: 'Budget (Backpacker)',
+    optStandard: 'Standard (Mid-range)',
+    optPremium: 'Premium (Luxury / Resort)',
+  },
+};

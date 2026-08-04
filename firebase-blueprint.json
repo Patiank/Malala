@@ -1,0 +1,59 @@
+{
+  "collections": [
+    {
+      "name": "destinations",
+      "access": "read: true, write: request.auth != null",
+      "fields": [
+        { "name": "title", "type": "string" },
+        { "name": "category", "type": "string" },
+        { "name": "regency", "type": "string" },
+        { "name": "tag", "type": "string" },
+        { "name": "description", "type": "string" },
+        { "name": "highlights", "type": "array" },
+        { "name": "bestTime", "type": "string" },
+        { "name": "locationDetails", "type": "string" },
+        { "name": "imageUrl", "type": "string" },
+        { "name": "isPopular", "type": "boolean", "optional": true },
+        { "name": "videoUrl", "type": "string", "optional": true }
+      ]
+    },
+    {
+      "name": "cultures",
+      "access": "read: true, write: request.auth != null",
+      "fields": [
+        { "name": "title", "type": "string" },
+        { "name": "category", "type": "string" },
+        { "name": "description", "type": "string" },
+        { "name": "philosophy", "type": "string" },
+        { "name": "origin", "type": "string" },
+        { "name": "imageUrl", "type": "string" },
+        { "name": "videoUrl", "type": "string", "optional": true }
+      ]
+    },
+    {
+      "name": "culinaries",
+      "access": "read: true, write: request.auth != null",
+      "fields": [
+        { "name": "title", "type": "string" },
+        { "name": "type", "type": "string" },
+        { "name": "origin", "type": "string" },
+        { "name": "description", "type": "string" },
+        { "name": "flavorProfile", "type": "string" },
+        { "name": "imageUrl", "type": "string" },
+        { "name": "videoUrl", "type": "string", "optional": true }
+      ]
+    },
+    {
+      "name": "events",
+      "access": "read: true, write: request.auth != null",
+      "fields": [
+        { "name": "title", "type": "string" },
+        { "name": "schedule", "type": "string" },
+        { "name": "location", "type": "string" },
+        { "name": "description", "type": "string" },
+        { "name": "imageUrl", "type": "string" },
+        { "name": "videoUrl", "type": "string", "optional": true }
+      ]
+    }
+  ]
+}
