@@ -2,14 +2,19 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BG_IMAGE_1, BG_IMAGE_2 } from '../data/content';
 
 interface ImageRevealBackgroundProps {
+  bgMediaType?: 'image' | 'video';
   baseImage?: string;
   revealImage?: string;
+  baseVideo?: string;
 }
 
 export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
+  bgMediaType = 'image',
   baseImage = BG_IMAGE_1,
   revealImage = BG_IMAGE_2,
+  baseVideo = '',
 }) => {
+  const isVideo = bgMediaType === 'video' && Boolean(baseVideo && baseVideo.trim());
   const revealRef = useRef<HTMLDivElement>(null);
   const patternRef = useRef<SVGPatternElement>(null);
 
@@ -42,6 +47,8 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
   }, []);
 
   useEffect(() => {
+    if (isVideo) return; // Skip spotlight reveal animation loop if media is video
+
     let lastUserTouch = Date.now();
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -82,7 +89,6 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
 
     const loop = () => {
       const now = Date.now();
-      // If no touch or mouse interaction for > 2 seconds, drift automatically in a gentle orbit
       if (now - lastUserTouch > 2000) {
         autoAngle += 0.008;
         const orbitRadiusX = width * 0.25;
@@ -93,14 +99,12 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
         };
       }
 
-      // Ease smooth cursor toward target with factor 0.1
       smoothRef.current.x += (mouseRef.current.x - smoothRef.current.x) * 0.1;
       smoothRef.current.y += (mouseRef.current.y - smoothRef.current.y) * 0.1;
 
       const cx = smoothRef.current.x;
       const cy = smoothRef.current.y;
 
-      // Fluid spotlight radius adjusted for screen width
       const radius = Math.round(Math.min(750, Math.max(220, window.innerWidth * 0.32)));
 
       if (ctx) {
@@ -129,7 +133,6 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
         }
       }
 
-      // Parallax Grid Offset with factor 0.06
       const normX = (cx / (width || 1)) - 0.5;
       const normY = (cy / (height || 1)) - 0.5;
 
@@ -153,7 +156,45 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
       window.removeEventListener('resize', updateCanvasSize);
       cancelAnimationFrame(animId);
     };
-  }, []);
+  }, [isVideo]);
+
+  if (isVideo) {
+    return (
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-black">
+        {/* Background Video MP4 (No Reveal Effect) */}
+        <video
+          src={baseVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-90"
+        />
+
+        {/* Subtle Parallax SVG Grid Overlay */}
+        <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none">
+          <defs>
+            <pattern
+              id="lgpsm-grid-pattern-video"
+              width={gridCellSize}
+              height={gridCellSize}
+              patternUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+            >
+              <path
+                d={`M ${gridCellSize} 0 L 0 0 0 ${gridCellSize}`}
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="0.6"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#lgpsm-grid-pattern-video)" />
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

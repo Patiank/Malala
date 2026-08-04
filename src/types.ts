@@ -85,10 +85,14 @@ export interface EventItem {
 export interface DownloadItem {
   id: string;
   title: string;
+  titleEn?: string;
   category: string;
+  categoryEn?: string;
   type: string;
+  typeEn?: string;
   size: string;
   description: string;
+  descriptionEn?: string;
   filename: string;
   content: string;
   mimeType: string;
@@ -97,17 +101,24 @@ export interface DownloadItem {
 export interface HotInfoItem {
   id: string;
   title: string;
+  titleEn?: string;
   date: string;
+  dateEn?: string;
   category: string;
+  categoryEn?: string;
   description: string;
+  descriptionEn?: string;
   imageUrl?: string;
   tag?: string;
+  tagEn?: string;
   actionUrl?: string;
 }
 
 export interface AppSettings {
+  bgMediaType?: 'image' | 'video';
   baseImage?: string;
   revealImage?: string;
+  baseVideo?: string;
 }
 
 export interface FormAIItineraryActivity {

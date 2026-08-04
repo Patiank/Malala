@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { Flame } from 'lucide-react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ImageRevealBackground } from './components/ImageRevealBackground';
@@ -91,9 +92,33 @@ export default function App() {
     <div className="min-h-screen bg-white text-black font-jakarta flex flex-col justify-between relative overflow-x-hidden">
       {/* Spotlight Mask Background */}
       <ImageRevealBackground
+        bgMediaType={dataStore.appSettings.bgMediaType}
         baseImage={dataStore.appSettings.baseImage}
         revealImage={dataStore.appSettings.revealImage}
+        baseVideo={dataStore.appSettings.baseVideo}
       />
+
+      {/* Fixed Vertical Hot Info Trigger (Far Left) */}
+      <button
+        onClick={() => handleOpenDrawer('hotinfo')}
+        className={`fixed left-0 top-1/2 -translate-y-1/2 z-40 bg-red-600 hover:bg-black text-white transition-all duration-300 py-4 px-2.5 rounded-r-xl flex flex-col items-center gap-3 shadow-2xl group border border-l-0 border-red-700 hover:border-gray-900 cursor-pointer focus:outline-none select-none ${
+          activeDrawer === 'hotinfo' ? 'bg-black ring-2 ring-red-500' : ''
+        }`}
+        title={lang === 'en' ? 'Hot Info & Latest News' : 'Hot Info & Berita Terbaru'}
+        aria-label="Hot Info & Berita Terbaru"
+      >
+        <span className="relative flex items-center justify-center">
+          <Flame className="w-4.5 h-4.5 text-yellow-300 group-hover:scale-125 transition-transform duration-200" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-ping" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full" />
+        </span>
+        <span
+          className="font-orbitron font-extrabold text-[10px] sm:text-[11px] tracking-[0.2em] text-white uppercase select-none"
+          style={{ writingMode: 'vertical-lr' }}
+        >
+          Hot Info & Berita Terbaru
+        </span>
+      </button>
 
       {/* Header (Logo & Nav) */}
       <Header

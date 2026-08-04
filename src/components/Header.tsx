@@ -100,8 +100,10 @@ export const Header: React.FC<HeaderProps> = ({
       >
         <button
           onClick={() => handleNavClick('destinations')}
-          className={`hover:opacity-50 transition-opacity cursor-pointer ${
-            activeDrawer === 'destinations' ? 'underline underline-offset-4 font-bold' : ''
+          className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'destinations'
+              ? 'bg-black text-white border-black font-bold'
+              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
           }`}
         >
           {t.navDestinations}
@@ -109,8 +111,10 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('culture')}
-          className={`hover:opacity-50 transition-opacity cursor-pointer ${
-            activeDrawer === 'culture' ? 'underline underline-offset-4 font-bold' : ''
+          className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'culture'
+              ? 'bg-black text-white border-black font-bold'
+              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
           }`}
         >
           {t.navCulture}
@@ -118,8 +122,10 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('culinary')}
-          className={`hover:opacity-50 transition-opacity cursor-pointer ${
-            activeDrawer === 'culinary' ? 'underline underline-offset-4 font-bold' : ''
+          className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'culinary'
+              ? 'bg-black text-white border-black font-bold'
+              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
           }`}
         >
           {t.navCulinary}
@@ -127,8 +133,10 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('events')}
-          className={`hover:opacity-50 transition-opacity cursor-pointer ${
-            activeDrawer === 'events' ? 'underline underline-offset-4 font-bold' : ''
+          className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'events'
+              ? 'bg-black text-white border-black font-bold'
+              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
           }`}
         >
           {t.navEvents}
@@ -136,8 +144,10 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => handleNavClick('download')}
-          className={`inline-flex items-center gap-1 hover:opacity-50 transition-opacity cursor-pointer ${
-            activeDrawer === 'download' ? 'underline underline-offset-4 font-bold' : ''
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'download'
+              ? 'bg-black text-white border-black font-bold'
+              : 'border-transparent text-black hover:bg-black hover:text-white hover:border-black'
           }`}
         >
           <Download className="w-3.5 h-3.5" />

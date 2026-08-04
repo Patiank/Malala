@@ -29,15 +29,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
 
   // Settings form state
   const [settingsFormData, setSettingsFormData] = useState({
+    bgMediaType: appSettings?.bgMediaType || 'image',
     baseImage: appSettings?.baseImage || '',
     revealImage: appSettings?.revealImage || '',
+    baseVideo: appSettings?.baseVideo || '',
   });
 
   useEffect(() => {
     if (appSettings) {
       setSettingsFormData({
+        bgMediaType: appSettings.bgMediaType || 'image',
         baseImage: appSettings.baseImage || '',
         revealImage: appSettings.revealImage || '',
+        baseVideo: appSettings.baseVideo || '',
       });
     }
   }, [appSettings]);
@@ -114,11 +118,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
         content: result,
       }));
     };
-    if (file.type.startsWith('image/') || file.type.includes('pdf') || file.type.includes('text') || file.type.includes('svg')) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsText(file);
-    }
+    reader.readAsDataURL(file);
   };
   
   const handleArrayChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, name: string) => {
@@ -318,52 +318,179 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
         {adminTab === 'settings' ? (
           <div className="bg-amber-50/50 border border-amber-200 p-4 rounded-lg space-y-4 font-jakarta">
             <h4 className="font-bold text-xs uppercase text-amber-900 flex items-center gap-2">
-              Pengaturan Gambar Latar Belakang Canvas & Reveal Effect
+              Pengaturan Latar Belakang Utama (Gambar & Video MP4)
             </h4>
             <p className="text-xs text-gray-600 leading-relaxed">
-              Ubah URL gambar dasar (Base Canvas Image) dan gambar efek sorot cursor (Hover Reveal Image) yang muncul di latar belakang aplikasi. Dukung link biasa maupun tautan Google Drive.
+              Pilih tipe media latar belakang halaman utama. Jika menggunakan <strong>Gambar</strong>, efek spotlight reveal saat kursor digerakkan akan aktif. Jika memilih <strong>Video MP4</strong>, latar belakang akan memutar video secara otomatis dan efek reveal ditiadakan.
             </p>
 
             <div className="space-y-4">
+              {/* Media Type Selector */}
               <div>
-                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
-                  1. Base Canvas Image URL (Gambar Utama Latar Belakang)
+                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1.5">
+                  Tipe Media Latar Belakang
                 </label>
-                <input
-                  type="text"
-                  name="baseImage"
-                  value={settingsFormData.baseImage}
-                  onChange={handleSettingsChange}
-                  placeholder="https://drive.google.com/file/d/... ATAU URL Gambar Direct"
-                  className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
-                />
-                <p className="text-[10px] text-gray-500 mt-1">Tautan Google Drive otomatis dikonversi ke direct image link.</p>
-                {settingsFormData.baseImage && (
-                  <div className="mt-2 h-28 w-full rounded overflow-hidden border border-gray-300 bg-gray-100">
-                    <img src={settingsFormData.baseImage} alt="Base Preview" className="w-full h-full object-cover" />
-                  </div>
-                )}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSettingsFormData(prev => ({ ...prev, bgMediaType: 'image' }))}
+                    className={`py-2 px-3 rounded-md border text-xs font-bold uppercase flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                      settingsFormData.bgMediaType === 'image' || !settingsFormData.bgMediaType
+                        ? 'bg-black text-white border-black shadow-xs'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span>🖼️ Gambar (Dengan Reveal Effect)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettingsFormData(prev => ({ ...prev, bgMediaType: 'video' }))}
+                    className={`py-2 px-3 rounded-md border text-xs font-bold uppercase flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                      settingsFormData.bgMediaType === 'video'
+                        ? 'bg-black text-white border-black shadow-xs'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span>🎬 Video MP4 (Tanpa Reveal)</span>
+                  </button>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
-                  2. Hover Reveal Canvas Image URL (Gambar Kedua Saat Disorot Cursor)
-                </label>
-                <input
-                  type="text"
-                  name="revealImage"
-                  value={settingsFormData.revealImage}
-                  onChange={handleSettingsChange}
-                  placeholder="https://drive.google.com/file/d/... ATAU URL Gambar Direct"
-                  className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
-                />
-                <p className="text-[10px] text-gray-500 mt-1">Gambar ini akan muncul di dalam efek lingkaran sorot kursor pengguna.</p>
-                {settingsFormData.revealImage && (
-                  <div className="mt-2 h-28 w-full rounded overflow-hidden border border-gray-300 bg-gray-100">
-                    <img src={settingsFormData.revealImage} alt="Reveal Preview" className="w-full h-full object-cover" />
+              {/* Video Settings */}
+              {settingsFormData.bgMediaType === 'video' ? (
+                <div className="bg-white border border-gray-200 p-3 rounded-md space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      1. Upload File Video MP4 (Lokal)
+                    </label>
+                    <input
+                      type="file"
+                      accept="video/mp4,video/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            const res = evt.target?.result as string;
+                            setSettingsFormData(prev => ({ ...prev, baseVideo: res }));
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                    />
+                    <p className="text-[10px] text-gray-500 mt-1">Pilih file .mp4 langsung dari perangkat Anda.</p>
                   </div>
-                )}
-              </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      2. Atau Input URL Video MP4 Direct Link
+                    </label>
+                    <input
+                      type="text"
+                      name="baseVideo"
+                      value={settingsFormData.baseVideo}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, baseVideo: e.target.value }))}
+                      placeholder="https://example.com/background.mp4 ATAU link MP4"
+                      className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
+                    />
+                  </div>
+
+                  {settingsFormData.baseVideo && (
+                    <div>
+                      <span className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Preview Video Latar:</span>
+                      <div className="h-36 w-full rounded overflow-hidden border border-gray-300 bg-black">
+                        <video
+                          src={settingsFormData.baseVideo}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Image Settings */
+                <div className="bg-white border border-gray-200 p-3 rounded-md space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      1. Base Canvas Image (Gambar Utama Latar Belakang)
+                    </label>
+                    <div className="space-y-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                              const res = evt.target?.result as string;
+                              setSettingsFormData(prev => ({ ...prev, baseImage: res }));
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        name="baseImage"
+                        value={settingsFormData.baseImage}
+                        onChange={(e) => setSettingsFormData(prev => ({ ...prev, baseImage: e.target.value }))}
+                        placeholder="https://drive.google.com/file/d/... ATAU URL Gambar Direct"
+                        className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
+                      />
+                    </div>
+                    {settingsFormData.baseImage && (
+                      <div className="mt-2 h-28 w-full rounded overflow-hidden border border-gray-300 bg-gray-100">
+                        <img src={settingsFormData.baseImage} alt="Base Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      2. Hover Reveal Canvas Image (Gambar Kedua Saat Disorot Cursor)
+                    </label>
+                    <div className="space-y-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                              const res = evt.target?.result as string;
+                              setSettingsFormData(prev => ({ ...prev, revealImage: res }));
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        name="revealImage"
+                        value={settingsFormData.revealImage}
+                        onChange={(e) => setSettingsFormData(prev => ({ ...prev, revealImage: e.target.value }))}
+                        placeholder="https://drive.google.com/file/d/... ATAU URL Gambar Direct"
+                        className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
+                      />
+                    </div>
+                    {settingsFormData.revealImage && (
+                      <div className="mt-2 h-28 w-full rounded overflow-hidden border border-gray-300 bg-gray-100">
+                        <img src={settingsFormData.revealImage} alt="Reveal Preview" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <button
                 onClick={handleSaveSettings}
@@ -378,16 +505,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
             <h4 className="font-bold text-xs uppercase text-gray-500">{editingId === 'new' ? 'Tambah Item Baru' : 'Edit Item'}</h4>
             
             <div className="space-y-3 font-jakarta">
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Judul / Nama File Asset</label>
-                <input type="text" name="title" value={formData.title || ''} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+              {/* Title (ID & EN) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">1. Judul / Nama (Bahasa Indonesia)</label>
+                  <input type="text" name="title" value={formData.title || ''} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">1. Title / Name (English Translation)</label>
+                  <input type="text" name="titleEn" value={formData.titleEn || ''} onChange={handleChange} placeholder="e.g. Bukittinggi Clock Tower" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs font-medium" />
+                </div>
               </div>
 
+              {/* Hot Info Tab Fields */}
               {adminTab === 'hotinfo' && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Kategori Info</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">2. Kategori Info (Indonesian)</label>
                       <select name="category" value={formData.category || 'Berita Utama'} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs">
                         <option>Berita Utama</option>
                         <option>Cuaca & Jalur</option>
@@ -396,39 +531,73 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Tanggal / Waktu Update</label>
-                      <input type="text" name="date" value={formData.date || ''} onChange={handleChange} placeholder="e.g. Hari Ini, 16:30 WIB" className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">2. Category Info (English Translation)</label>
+                      <input type="text" name="categoryEn" value={formData.categoryEn || ''} onChange={handleChange} placeholder="e.g. Main News / Weather Update" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Tag / Label Status</label>
-                      <input type="text" name="tag" value={formData.tag || ''} onChange={handleChange} placeholder="e.g. Penting, Festival, BPBD Info" className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">3. Tanggal / Waktu (Indonesian)</label>
+                      <input type="text" name="date" value={formData.date || ''} onChange={handleChange} placeholder="e.g. Hari Ini, 16:30 WIB" className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">URL / Lokasi Google Maps (Opsional)</label>
-                      <input type="text" name="actionUrl" value={formData.actionUrl || formData.locationQuery || ''} onChange={handleChange} placeholder="e.g. Jam Gadang Bukittinggi ATAU https://maps.google.com/..." className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">3. Date / Time (English Translation)</label>
+                      <input type="text" name="dateEn" value={formData.dateEn || ''} onChange={handleChange} placeholder="e.g. Today, 04:30 PM WIB" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">4. Tag / Label (Indonesian)</label>
+                      <input type="text" name="tag" value={formData.tag || ''} onChange={handleChange} placeholder="e.g. Penting, Festival" className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">4. Tag / Label (English Translation)</label>
+                      <input type="text" name="tagEn" value={formData.tagEn || ''} onChange={handleChange} placeholder="e.g. Urgent, Cultural Festival" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">5. Isi Berita (Bahasa Indonesia)</label>
+                      <textarea name="description" value={formData.description || formData.content || ''} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-24 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">5. News Description (English Translation)</label>
+                      <textarea name="descriptionEn" value={formData.descriptionEn || ''} onChange={handleChange} placeholder="English news summary..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-24 resize-none" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Isi Berita / Keterangan Lengkap</label>
-                    <textarea name="description" value={formData.description || formData.content || ''} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-24 resize-none" />
+                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">6. URL Google Maps / Link Aksi (Alamat Single)</label>
+                    <input type="text" name="actionUrl" value={formData.actionUrl || formData.locationQuery || ''} onChange={handleChange} placeholder="e.g. Jam Gadang Bukittinggi ATAU https://maps.google.com/..." className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
                   </div>
                 </>
               )}
 
+              {/* Download Tab Fields */}
               {adminTab === 'download' && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Kategori Asset</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">2. Kategori Asset (Indonesian)</label>
                       <input type="text" name="category" value={formData.category || ''} onChange={handleChange} placeholder="e.g. E-Booklet PDF, Logo Kit" className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Format Tipe</label>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">2. Asset Category (English Translation)</label>
+                      <input type="text" name="categoryEn" value={formData.categoryEn || ''} onChange={handleChange} placeholder="e.g. PDF Guide Booklet" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">3. Format Tipe (Indonesian)</label>
                       <input type="text" name="type" value={formData.type || ''} onChange={handleChange} placeholder="e.g. Document PDF (24 Halaman)" className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">3. Format Type (English Translation)</label>
+                      <input type="text" name="typeEn" value={formData.typeEn || ''} onChange={handleChange} placeholder="e.g. Printable PDF Document" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
 
@@ -443,9 +612,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Deskripsi Singkat Asset</label>
-                    <textarea name="description" value={formData.description || ''} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-16 resize-none" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">4. Deskripsi Asset (Indonesian)</label>
+                      <textarea name="description" value={formData.description || ''} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">4. Asset Description (English Translation)</label>
+                      <textarea name="descriptionEn" value={formData.descriptionEn || ''} onChange={handleChange} placeholder="English asset description..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
                   </div>
 
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
@@ -469,11 +644,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 </>
               )}
 
+              {/* Destinations Tab Fields */}
               {adminTab === 'destinations' && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Kategori</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">2. Kategori (Indonesian)</label>
                       <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs">
                         <option>Alam</option>
                         <option>Danau & Gunung</option>
@@ -483,40 +659,85 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Wilayah / Kabupaten</label>
-                      <input type="text" name="regency" value={formData.regency} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">2. Category (English Translation)</label>
+                      <input type="text" name="categoryEn" value={formData.categoryEn || ''} onChange={handleChange} placeholder="e.g. Lakes & Mountains" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Tag (Label)</label>
-                    <input type="text" name="tag" value={formData.tag} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Deskripsi</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Highlights (Pisahkan dengan baris baru)</label>
-                    <textarea value={formData.highlights?.join('\n') || ''} onChange={(e) => handleArrayChange(e, 'highlights')} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Waktu Terbaik</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">3. Wilayah / Kabupaten (Indonesian)</label>
+                      <input type="text" name="regency" value={formData.regency} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">3. Regency / City (English Translation)</label>
+                      <input type="text" name="regencyEn" value={formData.regencyEn || formData.regency || ''} onChange={handleChange} placeholder="e.g. Bukittinggi Regency" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">4. Tag Label (Indonesian)</label>
+                      <input type="text" name="tag" value={formData.tag} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">4. Tag Label (English Translation)</label>
+                      <input type="text" name="tagEn" value={formData.tagEn || ''} onChange={handleChange} placeholder="e.g. ANCIENT VOLCANIC CALDERA" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs font-mono" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">5. Deskripsi (Bahasa Indonesia)</label>
+                      <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-24 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">5. Description (English Translation)</label>
+                      <textarea name="descriptionEn" value={formData.descriptionEn || ''} onChange={handleChange} placeholder="English destination description..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-24 resize-none" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">6. Highlights (Bahasa Indonesia - Per Baris)</label>
+                      <textarea value={formData.highlights?.join('\n') || ''} onChange={(e) => handleArrayChange(e, 'highlights')} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">6. Highlights (English Translation - Per Line)</label>
+                      <textarea value={formData.highlightsEn?.join('\n') || ''} onChange={(e) => handleArrayChange(e, 'highlightsEn')} placeholder="Line 1&#10;Line 2" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">7. Waktu Terbaik (Indonesian)</label>
                       <input type="text" name="bestTime" value={formData.bestTime} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Detail Lokasi</label>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">7. Best Time (English Translation)</label>
+                      <input type="text" name="bestTimeEn" value={formData.bestTimeEn || ''} onChange={handleChange} placeholder="e.g. Year-round (Morning & Evening)" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">8. Detail Lokasi (Indonesian)</label>
                       <input type="text" name="locationDetails" value={formData.locationDetails} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">8. Location Details (English Translation)</label>
+                      <input type="text" name="locationDetailsEn" value={formData.locationDetailsEn || ''} onChange={handleChange} placeholder="e.g. Bukittinggi City Center, West Sumatra" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
                 </>
               )}
 
+              {/* Culture Tab Fields */}
               {adminTab === 'culture' && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Kategori</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">2. Kategori (Indonesian)</label>
                       <select name="category" value={formData.category} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs">
                         <option>Arsitektur</option>
                         <option>Tari & Musik</option>
@@ -526,26 +747,52 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Asal Daerah</label>
-                      <input type="text" name="origin" value={formData.origin} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">2. Category (English Translation)</label>
+                      <input type="text" name="categoryEn" value={formData.categoryEn || ''} onChange={handleChange} placeholder="e.g. Architecture & Heritage" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Deskripsi</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">3. Asal Daerah (Indonesian)</label>
+                      <input type="text" name="origin" value={formData.origin} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">3. Origin / Region (English Translation)</label>
+                      <input type="text" name="originEn" value={formData.originEn || formData.origin || ''} onChange={handleChange} placeholder="e.g. Tanah Datar Regency" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Filosofi / Makna</label>
-                    <textarea name="philosophy" value={formData.philosophy} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-16 resize-none" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">4. Deskripsi (Bahasa Indonesia)</label>
+                      <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">4. Description (English Translation)</label>
+                      <textarea name="descriptionEn" value={formData.descriptionEn || ''} onChange={handleChange} placeholder="English culture description..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">5. Filosofi / Makna (Bahasa Indonesia)</label>
+                      <textarea name="philosophy" value={formData.philosophy} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-16 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">5. Philosophy / Meaning (English Translation)</label>
+                      <textarea name="philosophyEn" value={formData.philosophyEn || ''} onChange={handleChange} placeholder="English philosophy description..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-16 resize-none" />
+                    </div>
                   </div>
                 </>
               )}
 
+              {/* Culinary Tab Fields */}
               {adminTab === 'culinary' && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Jenis Makanan</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">2. Jenis Makanan (Indonesian)</label>
                       <select name="type" value={formData.type} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs">
                         <option>Makanan Utama</option>
                         <option>Minuman Tradisional</option>
@@ -553,36 +800,80 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Asal Daerah</label>
-                      <input type="text" name="origin" value={formData.origin} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">2. Dish Type (English Translation)</label>
+                      <input type="text" name="typeEn" value={formData.typeEn || ''} onChange={handleChange} placeholder="e.g. Main Course / Traditional Snack" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Deskripsi</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">3. Asal Daerah (Indonesian)</label>
+                      <input type="text" name="origin" value={formData.origin} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">3. Origin / Region (English Translation)</label>
+                      <input type="text" name="originEn" value={formData.originEn || formData.origin || ''} onChange={handleChange} placeholder="e.g. Payakumbuh & Bukittinggi" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Profil Rasa (Pisahkan dengan koma)</label>
-                    <input type="text" name="flavorProfile" value={formData.flavorProfile} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">4. Deskripsi (Bahasa Indonesia)</label>
+                      <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">4. Description (English Translation)</label>
+                      <textarea name="descriptionEn" value={formData.descriptionEn || ''} onChange={handleChange} placeholder="English culinary description..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">5. Profil Rasa (Indonesian)</label>
+                      <input type="text" name="flavorProfile" value={formData.flavorProfile} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">5. Flavor Profile (English Translation)</label>
+                      <input type="text" name="flavorProfileEn" value={formData.flavorProfileEn || ''} onChange={handleChange} placeholder="e.g. Rich savory & spicy coconut curry" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
                   </div>
                 </>
               )}
 
+              {/* Events Tab Fields */}
               {adminTab === 'events' && (
                 <>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Jadwal (Bulan/Tanggal)</label>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">2. Jadwal (Indonesian)</label>
                       <input type="text" name="schedule" value={formData.schedule} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Lokasi</label>
-                      <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">2. Schedule (English Translation)</label>
+                      <input type="text" name="scheduleEn" value={formData.scheduleEn || ''} onChange={handleChange} placeholder="e.g. Every Weekend (Rotational)" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">Deskripsi</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">3. Lokasi (Indonesian)</label>
+                      <input type="text" name="location" value={formData.location} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">3. Location (English Translation)</label>
+                      <input type="text" name="locationEn" value={formData.locationEn || ''} onChange={handleChange} placeholder="e.g. Tanah Datar Rice Fields" className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-gray-500 mb-1">4. Deskripsi (Bahasa Indonesia)</label>
+                      <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase text-blue-600 mb-1">4. Description (English Translation)</label>
+                      <textarea name="descriptionEn" value={formData.descriptionEn || ''} onChange={handleChange} placeholder="English event description..." className="w-full bg-blue-50/40 border border-blue-200 rounded p-2 text-xs h-20 resize-none" />
+                    </div>
                   </div>
                 </>
               )}

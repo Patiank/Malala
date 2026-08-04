@@ -11,9 +11,21 @@ export function useData() {
   const [eventItems, setEventItems] = useState<EventItem[]>([]);
   const [downloadItems, setDownloadItems] = useState<DownloadItem[]>([]);
   const [hotInfoItems, setHotInfoItems] = useState<HotInfoItem[]>([]);
-  const [appSettings, setAppSettings] = useState<AppSettings>({
-    baseImage: BG_IMAGE_1,
-    revealImage: BG_IMAGE_2,
+  const [appSettings, setAppSettings] = useState<AppSettings>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('malala_app_settings');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+        console.warn('Failed to parse appSettings from localStorage:', e);
+      }
+    }
+    return {
+      bgMediaType: 'image',
+      baseImage: BG_IMAGE_1,
+      revealImage: BG_IMAGE_2,
+      baseVideo: '',
+    };
   });
 
   useEffect(() => {
@@ -69,10 +81,38 @@ export function useData() {
     const unsubSett = onSnapshot(doc(db, 'settings', 'hero'), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data() as AppSettings;
-        setAppSettings({
-          baseImage: data.baseImage ? getDirectDriveUrl(data.baseImage) : BG_IMAGE_1,
-          revealImage: data.revealImage ? getDirectDriveUrl(data.revealImage) : BG_IMAGE_2,
-        });
+        if (data && (data.baseImage || data.revealImage || data.baseVideo)) {
+          // Check if local storage has custom uploaded media (data: URLs or custom URLs)
+          let hasLocalCustom = false;
+          if (typeof window !== 'undefined') {
+            try {
+              const localSaved = localStorage.getItem('malala_app_settings');
+              if (localSaved) {
+                const parsed = JSON.parse(localSaved);
+                if (parsed.baseImage?.startsWith('data:') || parsed.revealImage?.startsWith('data:') || parsed.baseVideo?.startsWith('data:')) {
+                  hasLocalCustom = true;
+                }
+              }
+            } catch (e) {}
+          }
+
+          if (!hasLocalCustom) {
+            const fetched: AppSettings = {
+              bgMediaType: data.bgMediaType || 'image',
+              baseImage: data.baseImage ? getDirectDriveUrl(data.baseImage) : BG_IMAGE_1,
+              revealImage: data.revealImage ? getDirectDriveUrl(data.revealImage) : BG_IMAGE_2,
+              baseVideo: data.baseVideo || '',
+            };
+            setAppSettings(fetched);
+            if (typeof window !== 'undefined') {
+              try {
+                localStorage.setItem('malala_app_settings', JSON.stringify(fetched));
+              } catch (e) {
+                console.warn('Failed to save settings to localStorage:', e);
+              }
+            }
+          }
+        }
       }
     }, (err) => console.warn("Firestore settings error:", err));
 
@@ -101,13 +141,39 @@ export function useData() {
 
   const saveSettings = async (newSettings: AppSettings) => {
     try {
-      const formatted = {
+      const formatted: AppSettings = {
+        bgMediaType: newSettings.bgMediaType || 'image',
         baseImage: newSettings.baseImage ? getDirectDriveUrl(newSettings.baseImage) : BG_IMAGE_1,
         revealImage: newSettings.revealImage ? getDirectDriveUrl(newSettings.revealImage) : BG_IMAGE_2,
+        baseVideo: newSettings.baseVideo || '',
       };
-      await setDoc(doc(db, 'settings', 'hero'), formatted);
+      setAppSettings(formatted);
+
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('malala_app_settings', JSON.stringify(formatted));
+        } catch (e) {
+          console.warn('Failed to save settings to localStorage (quota exceeded or storage full):', e);
+        }
+      }
+
+      // Safe payload for Firestore (omit heavy base64 > 800KB to avoid Firestore 1MB doc limit)
+      const firestorePayload: any = {
+        bgMediaType: formatted.bgMediaType,
+      };
+      if (formatted.baseImage && (!formatted.baseImage.startsWith('data:') || formatted.baseImage.length < 800000)) {
+        firestorePayload.baseImage = formatted.baseImage;
+      }
+      if (formatted.revealImage && (!formatted.revealImage.startsWith('data:') || formatted.revealImage.length < 800000)) {
+        firestorePayload.revealImage = formatted.revealImage;
+      }
+      if (formatted.baseVideo && (!formatted.baseVideo.startsWith('data:') || formatted.baseVideo.length < 800000)) {
+        firestorePayload.baseVideo = formatted.baseVideo;
+      }
+
+      await setDoc(doc(db, 'settings', 'hero'), firestorePayload, { merge: true });
     } catch (e) {
-      console.error("Error saving settings to Firebase: ", e);
+      console.warn("Cloud settings sync notice (saved locally): ", e);
     }
   };
 
@@ -165,39 +231,39 @@ export function useData() {
 
   const getDestinationsWithEn = () => DESTINATIONS.map(item => ({
     ...item,
-    titleEn: `[EN] ${item.title}`,
-    categoryEn: item.category,
-    tagEn: `[EN] ${item.tag}`,
-    descriptionEn: `[EN] ${item.description}`,
-    highlightsEn: item.highlights.map(h => `[EN] ${h}`),
-    bestTimeEn: `[EN] ${item.bestTime}`,
-    locationDetailsEn: `[EN] ${item.locationDetails}`
+    titleEn: item.titleEn || item.title,
+    categoryEn: item.categoryEn || item.category,
+    tagEn: item.tagEn || item.tag,
+    descriptionEn: item.descriptionEn || item.description,
+    highlightsEn: item.highlightsEn || item.highlights,
+    bestTimeEn: item.bestTimeEn || item.bestTime,
+    locationDetailsEn: item.locationDetailsEn || item.locationDetails
   }));
 
   const getCultureWithEn = () => CULTURE_ITEMS.map(item => ({
     ...item,
-    titleEn: `[EN] ${item.title}`,
-    categoryEn: item.category,
-    descriptionEn: `[EN] ${item.description}`,
-    philosophyEn: `[EN] ${item.philosophy}`,
-    originEn: `[EN] ${item.origin}`
+    titleEn: item.titleEn || item.title,
+    categoryEn: item.categoryEn || item.category,
+    descriptionEn: item.descriptionEn || item.description,
+    philosophyEn: item.philosophyEn || item.philosophy,
+    originEn: item.originEn || item.origin
   }));
 
   const getCulinaryWithEn = () => CULINARY_ITEMS.map(item => ({
     ...item,
-    titleEn: `[EN] ${item.title}`,
-    typeEn: item.type,
-    originEn: `[EN] ${item.origin}`,
-    descriptionEn: `[EN] ${item.description}`,
-    flavorProfileEn: `[EN] ${item.flavorProfile}`
+    titleEn: item.titleEn || item.title,
+    typeEn: item.typeEn || item.type,
+    originEn: item.originEn || item.origin,
+    descriptionEn: item.descriptionEn || item.description,
+    flavorProfileEn: item.flavorProfileEn || item.flavorProfile
   }));
 
   const getEventsWithEn = () => EVENTS_SCHEDULE.map(item => ({
     ...item,
-    titleEn: `[EN] ${item.title}`,
-    scheduleEn: `[EN] ${item.schedule}`,
-    locationEn: `[EN] ${item.location}`,
-    descriptionEn: `[EN] ${item.description}`
+    titleEn: item.titleEn || item.title,
+    scheduleEn: item.scheduleEn || item.schedule,
+    locationEn: item.locationEn || item.location,
+    descriptionEn: item.descriptionEn || item.description
   }));
 
   return {

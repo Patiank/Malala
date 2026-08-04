@@ -4,12 +4,65 @@ import { DrawerType, Destination, CultureItem, CulinaryItem, EventItem, FormAIRe
 import { AdminPanel } from './AdminPanel';
 import { Language, translations } from '../lib/translations';
 
-const triggerDownload = (filename: string, content: string, mimeType: string = 'text/plain') => {
-  const blob = new Blob([content], { type: mimeType });
+const triggerDownload = (filename: string, content: string, mimeType: string = 'application/octet-stream') => {
+  if (!content) return;
+  const trimmed = content.trim();
+
+  // Case 1: Data URL (e.g. data:image/png;base64,... or data:application/pdf;base64,...)
+  if (trimmed.startsWith('data:')) {
+    try {
+      const parts = trimmed.split(',');
+      const meta = parts[0];
+      const raw = parts[1];
+
+      if (meta.includes('base64')) {
+        const decoded = atob(raw);
+        const u8arr = new Uint8Array(decoded.length);
+        for (let i = 0; i < decoded.length; i++) {
+          u8arr[i] = decoded.charCodeAt(i);
+        }
+        const detectedMime = meta.split(':')[1]?.split(';')[0] || mimeType;
+        const blob = new Blob([u8arr], { type: detectedMime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename || 'downloaded_file';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return;
+      }
+    } catch (err) {
+      console.warn("Failed to decode base64 data URL, falling back to direct href link:", err);
+      const a = document.createElement('a');
+      a.href = trimmed;
+      a.download = filename || 'downloaded_file';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
+  }
+
+  // Case 2: Web URL (http:// or https://)
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    const a = document.createElement('a');
+    a.href = trimmed;
+    a.target = '_blank';
+    a.download = filename || 'downloaded_file';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    return;
+  }
+
+  // Case 3: Raw SVG string or Plain text
+  const blob = new Blob([trimmed], { type: mimeType || 'image/svg+xml' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = filename;
+  a.download = filename || 'downloaded_file';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -757,6 +810,7 @@ export const Drawers: React.FC<DrawersProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filteredDestinations.map((dest) => {
                   const isSaved = savedIds.includes(dest.id);
+                  const isEn = lang === 'en';
                   return (
                     <div
                       key={dest.id}
@@ -767,17 +821,17 @@ export const Drawers: React.FC<DrawersProps> = ({
                         <div className="relative h-36 w-full overflow-hidden bg-gray-100">
                           <img
                             src={dest.imageUrl}
-                            alt={dest.title}
+                            alt={isEn && dest.titleEn ? dest.titleEn : dest.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             loading="lazy"
                           />
                           <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/75 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs">
-                            {dest.category}
+                            {isEn && dest.categoryEn ? dest.categoryEn : dest.category}
                           </div>
 
                           {/* Bookmark Button */}
                           <button
-                            onClick={() => onToggleSave(dest.id, dest.title)}
+                            onClick={() => onToggleSave(dest.id, isEn && dest.titleEn ? dest.titleEn : dest.title)}
                             className={`absolute top-2 right-2 p-1.5 rounded-full border transition-all cursor-pointer ${
                               isSaved
                                 ? 'bg-black text-white border-black'
@@ -793,13 +847,13 @@ export const Drawers: React.FC<DrawersProps> = ({
                         <div className="p-3.5 space-y-2">
                           <div className="text-gray-400 font-jakarta text-[11px] flex items-center gap-1 font-semibold">
                             <MapPin className="w-3 h-3 text-black" />
-                            {dest.regency}
+                            {isEn && dest.regencyEn ? dest.regencyEn : dest.regency}
                           </div>
                           <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm line-clamp-2">
-                            {dest.title}
+                            {isEn && dest.titleEn ? dest.titleEn : dest.title}
                           </h3>
                           <p className="font-jakarta text-gray-600 text-[11px] leading-relaxed line-clamp-2">
-                            {dest.description}
+                            {isEn && dest.descriptionEn ? dest.descriptionEn : dest.description}
                           </p>
                         </div>
                       </div>
@@ -808,7 +862,7 @@ export const Drawers: React.FC<DrawersProps> = ({
                       <div className="px-3.5 py-2.5 border-t border-gray-100 bg-gray-50 flex items-center justify-between text-[10px] font-jakarta">
                         <span className="flex items-center gap-1 text-gray-500 font-medium">
                           <Clock className="w-3 h-3 text-gray-400" />
-                          {dest.bestTime}
+                          {isEn && dest.bestTimeEn ? dest.bestTimeEn : dest.bestTime}
                         </span>
                         <button
                           onClick={() => setSelectedDestination(dest)}
@@ -832,6 +886,7 @@ export const Drawers: React.FC<DrawersProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {cultureItems.map((item: CultureItem) => {
                 const isSaved = savedIds.includes(item.id);
+                const isEn = lang === 'en';
                 return (
                   <div
                     key={item.id}
@@ -842,15 +897,15 @@ export const Drawers: React.FC<DrawersProps> = ({
                       <div className="relative h-36 w-full overflow-hidden bg-gray-100">
                         <img
                           src={item.imageUrl}
-                          alt={item.title}
+                          alt={isEn && item.titleEn ? item.titleEn : item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
                         />
                         <span className="absolute top-2 left-2 bg-black/75 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs">
-                          {item.category}
+                          {isEn && item.categoryEn ? item.categoryEn : item.category}
                         </span>
                         <button
-                          onClick={() => onToggleSave(item.id, item.title)}
+                          onClick={() => onToggleSave(item.id, isEn && item.titleEn ? item.titleEn : item.title)}
                           className={`absolute top-2 right-2 p-1.5 rounded-full border transition-all cursor-pointer ${
                             isSaved
                               ? 'bg-black text-white border-black'
@@ -863,20 +918,20 @@ export const Drawers: React.FC<DrawersProps> = ({
 
                       <div className="p-3.5 space-y-2">
                         <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
-                          {item.title}
+                          {isEn && item.titleEn ? item.titleEn : item.title}
                         </h3>
                         <p className="font-jakarta text-gray-600 text-[11px] leading-relaxed line-clamp-3">
-                          {item.description}
+                          {isEn && item.descriptionEn ? item.descriptionEn : item.description}
                         </p>
                       </div>
                     </div>
 
                     <div className="p-3 bg-gray-50 border-t border-gray-100 space-y-0.5">
                       <span className="font-jakarta font-bold text-[9px] text-gray-400 uppercase tracking-widest block">
-                        FALSAFAH MINANG
+                        {isEn ? 'MINANG PHILOSOPHY' : 'FALSAFAH MINANG'}
                       </span>
                       <p className="font-jakarta italic text-black font-semibold text-[11px] line-clamp-2 pb-2">
-                        "{item.philosophy}"
+                        "{isEn && item.philosophyEn ? item.philosophyEn : item.philosophy}"
                       </p>
                       <div className="flex justify-end pt-2 border-t border-gray-200">
                         <button
@@ -899,53 +954,56 @@ export const Drawers: React.FC<DrawersProps> = ({
           {/* =================================================== */}
           {activeDrawer === 'culinary' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {culinaryItems.map((cul: CulinaryItem) => (
-                <div
-                  key={cul.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden bg-white flex flex-col justify-between shadow-xs hover:border-black transition-all group"
-                >
-                  <div>
-                    {/* Image Banner */}
-                    <div className="relative h-36 w-full overflow-hidden bg-gray-100">
-                      <img
-                        src={cul.imageUrl}
-                        alt={cul.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <span className="absolute top-2 left-2 bg-black/75 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs">
-                        {cul.type}
-                      </span>
-                    </div>
-
-                    <div className="p-3.5 space-y-2">
-                      <div className="text-gray-400 font-jakarta text-[10px] uppercase tracking-wider font-semibold">
-                        Asal: {cul.origin}
-                      </div>
-                      <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
-                        {cul.title}
-                      </h3>
-                      <p className="font-jakarta text-gray-600 text-[11px] leading-relaxed line-clamp-3">
-                        {cul.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-gray-50 border-t border-gray-100 text-[11px] font-jakarta flex items-center justify-between">
+              {culinaryItems.map((cul: CulinaryItem) => {
+                const isEn = lang === 'en';
+                return (
+                  <div
+                    key={cul.id}
+                    className="border border-gray-200 rounded-lg overflow-hidden bg-white flex flex-col justify-between shadow-xs hover:border-black transition-all group"
+                  >
                     <div>
-                      <span className="font-bold text-black">Profil Rasa: </span>
-                      <span className="text-gray-600 line-clamp-1 block sm:inline">{cul.flavorProfile}</span>
+                      {/* Image Banner */}
+                      <div className="relative h-36 w-full overflow-hidden bg-gray-100">
+                        <img
+                          src={cul.imageUrl}
+                          alt={isEn && cul.titleEn ? cul.titleEn : cul.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <span className="absolute top-2 left-2 bg-black/75 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs">
+                          {isEn && cul.typeEn ? cul.typeEn : cul.type}
+                        </span>
+                      </div>
+
+                      <div className="p-3.5 space-y-2">
+                        <div className="text-gray-400 font-jakarta text-[10px] uppercase tracking-wider font-semibold">
+                          {isEn ? 'Origin:' : 'Asal:'} {isEn && cul.originEn ? cul.originEn : cul.origin}
+                        </div>
+                        <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
+                          {isEn && cul.titleEn ? cul.titleEn : cul.title}
+                        </h3>
+                        <p className="font-jakarta text-gray-600 text-[11px] leading-relaxed line-clamp-3">
+                          {isEn && cul.descriptionEn ? cul.descriptionEn : cul.description}
+                        </p>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => setSelectedCulinary(cul)}
-                      className="font-bold text-black text-[10px] uppercase flex items-center gap-0.5 hover:underline cursor-pointer shrink-0"
-                    >
-                      {translations[lang].btnDetail}
-                      <ChevronRight className="w-3 h-3" />
-                    </button>
+
+                    <div className="p-3 bg-gray-50 border-t border-gray-100 text-[11px] font-jakarta flex items-center justify-between">
+                      <div>
+                        <span className="font-bold text-black">{isEn ? 'Flavor Profile:' : 'Profil Rasa:'} </span>
+                        <span className="text-gray-600 line-clamp-1 block sm:inline">{isEn && cul.flavorProfileEn ? cul.flavorProfileEn : cul.flavorProfile}</span>
+                      </div>
+                      <button
+                        onClick={() => setSelectedCulinary(cul)}
+                        className="font-bold text-black text-[10px] uppercase flex items-center gap-0.5 hover:underline cursor-pointer shrink-0"
+                      >
+                        {translations[lang].btnDetail}
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -954,52 +1012,55 @@ export const Drawers: React.FC<DrawersProps> = ({
           {/* =================================================== */}
           {activeDrawer === 'events' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {eventItems.map((ev: EventItem) => (
-                <div
-                  key={ev.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden bg-white flex flex-col justify-between shadow-xs hover:border-black transition-all group"
-                >
-                  <div>
-                    {/* Image Banner */}
-                    <div className="relative h-36 w-full overflow-hidden bg-gray-100">
-                      <img
-                        src={ev.imageUrl}
-                        alt={ev.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <div className="absolute top-2 left-2 bg-black/80 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded flex items-center gap-1 backdrop-blur-xs">
-                        <Calendar className="w-3 h-3" />
-                        {ev.schedule}
+              {eventItems.map((ev: EventItem) => {
+                const isEn = lang === 'en';
+                return (
+                  <div
+                    key={ev.id}
+                    className="border border-gray-200 rounded-lg overflow-hidden bg-white flex flex-col justify-between shadow-xs hover:border-black transition-all group"
+                  >
+                    <div>
+                      {/* Image Banner */}
+                      <div className="relative h-36 w-full overflow-hidden bg-gray-100">
+                        <img
+                          src={ev.imageUrl}
+                          alt={isEn && ev.titleEn ? ev.titleEn : ev.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-2 left-2 bg-black/80 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded flex items-center gap-1 backdrop-blur-xs">
+                          <Calendar className="w-3 h-3" />
+                          {isEn && ev.scheduleEn ? ev.scheduleEn : ev.schedule}
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 space-y-2">
+                        <div className="text-gray-400 font-jakarta text-[10px] flex items-center gap-1 font-semibold">
+                          <MapPin className="w-3 h-3 text-black" />
+                          {isEn && ev.locationEn ? ev.locationEn : ev.location}
+                        </div>
+                        <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
+                          {isEn && ev.titleEn ? ev.titleEn : ev.title}
+                        </h3>
+                        <p className="font-jakarta text-gray-600 text-[11px] leading-relaxed line-clamp-3">
+                          {isEn && ev.descriptionEn ? ev.descriptionEn : ev.description}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="p-3.5 space-y-2">
-                      <div className="text-gray-400 font-jakarta text-[10px] flex items-center gap-1 font-semibold">
-                        <MapPin className="w-3 h-3 text-black" />
-                        {ev.location}
-                      </div>
-                      <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
-                        {ev.title}
-                      </h3>
-                      <p className="font-jakarta text-gray-600 text-[11px] leading-relaxed line-clamp-3">
-                        {ev.description}
-                      </p>
+                    <div className="p-3 bg-gray-50 border-t border-gray-100 text-[10px] font-jakarta text-gray-500 flex items-center justify-between">
+                      <span className="uppercase tracking-widest font-semibold">{isEn ? 'Official Event' : 'Event Resmi'}</span>
+                      <button
+                        onClick={() => setSelectedEvent(ev)}
+                        className="font-bold text-black text-[10px] uppercase flex items-center gap-0.5 hover:underline cursor-pointer shrink-0"
+                      >
+                        {translations[lang].btnDetail}
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
-
-                  <div className="p-3 bg-gray-50 border-t border-gray-100 text-[10px] font-jakarta text-gray-500 flex items-center justify-between">
-                    <span className="uppercase tracking-widest font-semibold">{lang === 'en' ? 'Official Event' : 'Event Resmi'}</span>
-                    <button
-                      onClick={() => setSelectedEvent(ev)}
-                      className="font-bold text-black text-[10px] uppercase flex items-center gap-0.5 hover:underline cursor-pointer shrink-0"
-                    >
-                      {translations[lang].btnDetail}
-                      <ChevronRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -1442,79 +1503,82 @@ export const Drawers: React.FC<DrawersProps> = ({
               <div className="space-y-4">
                 {(dataStore.hotInfoItems && dataStore.hotInfoItems.length > 0 ? dataStore.hotInfoItems : HOT_INFO_ITEMS)
                   .filter((item: any) => hotInfoCategory === 'Semua' || item.category === hotInfoCategory)
-                  .map((item: any) => (
-                    <div
-                      key={item.id}
-                      className={`border rounded-lg overflow-hidden bg-white shadow-xs transition-all ${
-                        item.tag === 'Penting' || item.isUrgent ? 'border-red-300 ring-1 ring-red-200' : 'border-gray-200 hover:border-black'
-                      }`}
-                    >
-                      {item.imageUrl && (
-                        <div className="relative h-40 w-full overflow-hidden bg-gray-100">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.title}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                          <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/80 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs">
-                            {item.category}
+                  .map((item: any) => {
+                    const isEn = lang === 'en';
+                    return (
+                      <div
+                        key={item.id}
+                        className={`border rounded-lg overflow-hidden bg-white shadow-xs transition-all ${
+                          item.tag === 'Penting' || item.isUrgent ? 'border-red-300 ring-1 ring-red-200' : 'border-gray-200 hover:border-black'
+                        }`}
+                      >
+                        {item.imageUrl && (
+                          <div className="relative h-40 w-full overflow-hidden bg-gray-100">
+                            <img
+                              src={item.imageUrl}
+                              alt={isEn && item.titleEn ? item.titleEn : item.title}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/80 text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded backdrop-blur-xs">
+                              {isEn && item.categoryEn ? item.categoryEn : item.category}
+                            </div>
+                            {(item.tag === 'Penting' || item.isUrgent) && (
+                              <div className="absolute top-2 right-2 bg-red-600 text-white font-jakarta font-extrabold text-[9px] uppercase px-2 py-0.5 rounded flex items-center gap-1 animate-pulse">
+                                <Flame className="w-3 h-3 text-yellow-300 fill-current" />
+                                {isEn && item.tagEn ? item.tagEn : (item.tag || 'Urgent')}
+                              </div>
+                            )}
+                            {item.date && (
+                              <div className="absolute bottom-2 left-2 bg-black/60 text-gray-200 font-jakarta text-[10px] px-2 py-0.5 rounded backdrop-blur-xs">
+                                {isEn && item.dateEn ? item.dateEn : item.date}
+                              </div>
+                            )}
                           </div>
-                          {(item.tag === 'Penting' || item.isUrgent) && (
-                            <div className="absolute top-2 right-2 bg-red-600 text-white font-jakarta font-extrabold text-[9px] uppercase px-2 py-0.5 rounded flex items-center gap-1 animate-pulse">
-                              <Flame className="w-3 h-3 text-yellow-300 fill-current" />
-                              {item.tag || 'Penting'}
-                            </div>
-                          )}
-                          {item.date && (
-                            <div className="absolute bottom-2 left-2 bg-black/60 text-gray-200 font-jakarta text-[10px] px-2 py-0.5 rounded backdrop-blur-xs">
-                              {item.date}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                        )}
 
-                      <div className="p-4 space-y-2">
-                        <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-sm leading-snug">
-                          {item.title}
-                        </h3>
-                        <p className="font-jakarta text-gray-700 text-xs leading-relaxed">
-                          {item.description || item.content}
-                        </p>
+                        <div className="p-4 space-y-2">
+                          <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-sm leading-snug">
+                            {isEn && item.titleEn ? item.titleEn : item.title}
+                          </h3>
+                          <p className="font-jakarta text-gray-700 text-xs leading-relaxed">
+                            {isEn && item.descriptionEn ? item.descriptionEn : (item.description || item.content)}
+                          </p>
 
-                        <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
-                          {(item.actionUrl || item.locationQuery) ? (
-                            <a
-                              href={getGoogleMapsUrl(item.actionUrl || item.locationQuery)!}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition-all font-jakarta font-bold text-xs uppercase cursor-pointer"
+                          <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+                            {(item.actionUrl || item.locationQuery) ? (
+                              <a
+                                href={getGoogleMapsUrl(item.actionUrl || item.locationQuery)!}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition-all font-jakarta font-bold text-xs uppercase cursor-pointer"
+                              >
+                                <MapPin className="w-3.5 h-3.5" />
+                                <span>{translations[lang].btnMap}</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            ) : <div />}
+
+                            <button
+                              onClick={() => {
+                                const textToShare = `${isEn && item.titleEn ? item.titleEn : item.title}\n${isEn && item.descriptionEn ? item.descriptionEn : (item.description || item.content)}`;
+                                if (navigator.share) {
+                                  navigator.share({ title: isEn && item.titleEn ? item.titleEn : item.title, text: textToShare, url: window.location.href });
+                                } else {
+                                  navigator.clipboard.writeText(textToShare);
+                                  alert('Tautan informasi berhasil disalin!');
+                                }
+                              }}
+                              className="p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded transition-colors cursor-pointer"
+                              title="Bagikan Info Ini"
                             >
-                              <MapPin className="w-3.5 h-3.5" />
-                              <span>{translations[lang].btnMap}</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </a>
-                          ) : <div />}
-
-                          <button
-                            onClick={() => {
-                              const textToShare = `${item.title}\n${item.description || item.content}`;
-                              if (navigator.share) {
-                                navigator.share({ title: item.title, text: textToShare, url: window.location.href });
-                              } else {
-                                navigator.clipboard.writeText(textToShare);
-                                alert('Tautan informasi berhasil disalin!');
-                              }
-                            }}
-                            className="p-1.5 text-gray-500 hover:text-black hover:bg-gray-100 rounded transition-colors cursor-pointer"
-                            title="Bagikan Info Ini"
-                          >
-                            <Share2 className="w-4 h-4" />
-                          </button>
+                              <Share2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
               </div>
             </div>
           )}
@@ -1532,51 +1596,54 @@ export const Drawers: React.FC<DrawersProps> = ({
               )}
 
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 font-jakarta text-xs text-gray-600 space-y-1">
-                <p className="font-bold text-black uppercase tracking-wider">Materi Promosi Resmi</p>
-                <p>Unduh materi promosi pariwisata Sumatera Barat untuk kebutuhan publikasi, media kit, pemandu wisata, atau informasi perjalanan Anda.</p>
+                <p className="font-bold text-black uppercase tracking-wider">{lang === 'en' ? 'Official Media Kit & Assets' : 'Materi Promosi Resmi'}</p>
+                <p>{lang === 'en' ? 'Download West Sumatra tourism promotional assets, media kits, booklets, and travel guides.' : 'Unduh materi promosi pariwisata Sumatera Barat untuk kebutuhan publikasi, media kit, pemandu wisata, atau informasi perjalanan Anda.'}</p>
               </div>
 
               <div className="space-y-4">
-                {(dataStore.downloadItems && dataStore.downloadItems.length > 0 ? dataStore.downloadItems : DOWNLOAD_ITEMS).map((item: any) => (
-                  <div
-                    key={item.id}
-                    className="border border-gray-200 rounded-lg p-4 bg-white hover:border-black transition-all flex flex-col justify-between space-y-3 shadow-xs group"
-                  >
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="bg-black text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded tracking-wider">
-                          {item.category}
-                        </span>
-                        <span className="text-gray-400 font-jakarta text-[10px] font-semibold">
-                          {item.size}
-                        </span>
+                {(dataStore.downloadItems && dataStore.downloadItems.length > 0 ? dataStore.downloadItems : DOWNLOAD_ITEMS).map((item: any) => {
+                  const isEn = lang === 'en';
+                  return (
+                    <div
+                      key={item.id}
+                      className="border border-gray-200 rounded-lg p-4 bg-white hover:border-black transition-all flex flex-col justify-between space-y-3 shadow-xs group"
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="bg-black text-white font-jakarta font-bold text-[9px] uppercase px-2 py-0.5 rounded tracking-wider">
+                            {isEn && item.categoryEn ? item.categoryEn : item.category}
+                          </span>
+                          <span className="text-gray-400 font-jakarta text-[10px] font-semibold">
+                            {item.size}
+                          </span>
+                        </div>
+                        <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
+                          {isEn && item.titleEn ? item.titleEn : item.title}
+                        </h3>
+                        <p className="font-jakarta text-gray-600 text-xs leading-relaxed">
+                          {isEn && item.descriptionEn ? item.descriptionEn : item.description}
+                        </p>
                       </div>
-                      <h3 className="font-orbitron font-bold text-black uppercase tracking-wide text-xs sm:text-sm">
-                        {item.title}
-                      </h3>
-                      <p className="font-jakarta text-gray-600 text-xs leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
 
-                    <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
-                      <span className="text-[10px] text-gray-400 font-jakarta font-semibold uppercase">
-                        Format: {item.type}
-                      </span>
-                      <button
-                        onClick={() => {
-                          triggerDownload(item.filename, item.content, item.mimeType);
-                          setDownloadSuccessMessage(`Berhasil mengunduh "${item.title}"`);
-                          setTimeout(() => setDownloadSuccessMessage(null), 4000);
-                        }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-black text-white font-jakarta font-bold text-xs uppercase hover:bg-gray-800 transition-colors cursor-pointer"
-                      >
-                        <Download className="w-3.5 h-3.5 text-green-400" />
-                        <span>Unduh File</span>
-                      </button>
+                      <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <span className="text-[10px] text-gray-400 font-jakarta font-semibold uppercase">
+                          Format: {isEn && item.typeEn ? item.typeEn : item.type}
+                        </span>
+                        <button
+                          onClick={() => {
+                            triggerDownload(item.filename, item.content, item.mimeType);
+                            setDownloadSuccessMessage(isEn ? `Successfully downloaded "${item.titleEn || item.title}"` : `Berhasil mengunduh "${item.title}"`);
+                            setTimeout(() => setDownloadSuccessMessage(null), 4000);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-black text-white font-jakarta font-bold text-xs uppercase hover:bg-gray-800 transition-colors cursor-pointer"
+                        >
+                          <Download className="w-3.5 h-3.5 text-green-400" />
+                          <span>{isEn ? 'Download File' : 'Unduh File'}</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
