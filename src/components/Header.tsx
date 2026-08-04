@@ -178,13 +178,12 @@ export const Header: React.FC<HeaderProps> = ({
         {/* UNI MALA AI Assistant Link */}
         <button
           onClick={() => handleNavClick('formai')}
-          className={`inline-flex items-center gap-1.5 px-3 py-1.5 md:px-2.5 md:py-1 rounded bg-black text-white hover:bg-gray-800 transition-all cursor-pointer font-bold ${
-            activeDrawer === 'formai' ? 'ring-2 ring-offset-1 ring-black' : ''
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-black text-white hover:bg-gray-800 transition-all cursor-pointer font-extrabold text-[11px] sm:text-xs tracking-wider uppercase ${
+            activeDrawer === 'formai' ? 'ring-2 ring-offset-1 ring-black shadow-md' : 'shadow-2xs'
           }`}
-          style={{ fontSize: 'var(--micro)' }}
         >
-          <Sparkles className="w-3 h-3 text-yellow-300 animate-pulse" />
-          <span>{t.navUniMala}</span>
+          <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+          <span className="font-orbitron tracking-widest">{t.navUniMala}</span>
         </button>
 
         <span className="text-gray-300 font-light select-none hidden md:inline">|</span>
