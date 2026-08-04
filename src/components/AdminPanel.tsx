@@ -56,6 +56,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [allowedAdminEmails, setAllowedAdminEmails] = useState<string[]>(() => {
+    if (appSettings?.allowedAdminEmails && appSettings.allowedAdminEmails.length > 0) {
+      return appSettings.allowedAdminEmails;
+    }
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('malala_allowed_admin_emails');
@@ -71,16 +74,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   });
   const [newAdminEmail, setNewAdminEmail] = useState<string>('');
 
-  // Sync allowed admin emails to localStorage
+  // Sync with Firestore appSettings when available
   useEffect(() => {
+    if (appSettings?.allowedAdminEmails && appSettings.allowedAdminEmails.length > 0) {
+      setAllowedAdminEmails(appSettings.allowedAdminEmails);
+    }
+  }, [appSettings?.allowedAdminEmails]);
+
+  // Sync allowed admin emails to localStorage & Firestore
+  const updateAdminEmails = async (nextList: string[]) => {
+    setAllowedAdminEmails(nextList);
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('malala_allowed_admin_emails', JSON.stringify(allowedAdminEmails));
+        localStorage.setItem('malala_allowed_admin_emails', JSON.stringify(nextList));
       } catch (e) {
-        console.warn('Failed to save admin emails:', e);
+        console.warn('Failed to save admin emails to localStorage:', e);
       }
     }
-  }, [allowedAdminEmails]);
+    try {
+      await saveSettings({
+        ...appSettings,
+        allowedAdminEmails: nextList,
+      });
+    } catch (e) {
+      console.warn('Failed to save admin emails to Firestore settings:', e);
+    }
+  };
 
   const checkIsEmailAllowed = (email: string | null | undefined): boolean => {
     if (!email) return false;
@@ -591,12 +610,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                   />
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       if (!newAdminEmail.trim() || !newAdminEmail.includes('@')) return;
                       const emailClean = newAdminEmail.trim().toLowerCase();
                       if (!allowedAdminEmails.includes(emailClean)) {
-                        setAllowedAdminEmails((prev) => [...prev, emailClean]);
-                        showSuccess(`Email '${emailClean}' berhasil ditambahkan ke Whitelist Admin!`);
+                        const nextList = [...allowedAdminEmails, emailClean];
+                        await updateAdminEmails(nextList);
+                        showSuccess(`Email '${emailClean}' berhasil ditambahkan dan disimpan permanen!`);
                       }
                       setNewAdminEmail('');
                     }}
@@ -624,8 +644,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                           <span>{email}</span>
                           <button
                             type="button"
-                            onClick={() => {
-                              setAllowedAdminEmails((prev) => prev.filter((e) => e !== email));
+                            onClick={async () => {
+                              const nextList = allowedAdminEmails.filter((e) => e !== email);
+                              await updateAdminEmails(nextList);
                               showSuccess(`Email '${email}' telah dihapus dari Whitelist Admin.`);
                             }}
                             className="text-gray-400 hover:text-red-600 font-bold ml-1 transition-colors cursor-pointer"

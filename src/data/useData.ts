@@ -102,6 +102,7 @@ export function useData() {
               baseImage: data.baseImage ? getDirectDriveUrl(data.baseImage) : BG_IMAGE_1,
               revealImage: data.revealImage ? getDirectDriveUrl(data.revealImage) : BG_IMAGE_2,
               baseVideo: data.baseVideo || '',
+              allowedAdminEmails: data.allowedAdminEmails && data.allowedAdminEmails.length > 0 ? data.allowedAdminEmails : ['aldoaldiles@gmail.com'],
             };
             setAppSettings(fetched);
             if (typeof window !== 'undefined') {
@@ -146,6 +147,7 @@ export function useData() {
         baseImage: newSettings.baseImage ? getDirectDriveUrl(newSettings.baseImage) : BG_IMAGE_1,
         revealImage: newSettings.revealImage ? getDirectDriveUrl(newSettings.revealImage) : BG_IMAGE_2,
         baseVideo: newSettings.baseVideo || '',
+        allowedAdminEmails: newSettings.allowedAdminEmails && newSettings.allowedAdminEmails.length > 0 ? newSettings.allowedAdminEmails : ['aldoaldiles@gmail.com'],
       };
       setAppSettings(formatted);
 
@@ -157,9 +159,10 @@ export function useData() {
         }
       }
 
-      // Safe payload for Firestore (omit heavy base64 > 800KB to avoid Firestore 1MB doc limit)
+      // Safe payload for Firestore
       const firestorePayload: any = {
         bgMediaType: formatted.bgMediaType,
+        allowedAdminEmails: formatted.allowedAdminEmails,
       };
       if (formatted.baseImage && (!formatted.baseImage.startsWith('data:') || formatted.baseImage.length < 800000)) {
         firestorePayload.baseImage = formatted.baseImage;

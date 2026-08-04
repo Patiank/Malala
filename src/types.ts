@@ -128,6 +128,7 @@ export interface AppSettings {
   baseImage?: string;
   revealImage?: string;
   baseVideo?: string;
+  allowedAdminEmails?: string[];
 }
 
 export interface FormAIItineraryActivity {
