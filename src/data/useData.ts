@@ -228,6 +228,7 @@ export function useData() {
     batch.set(doc(db, 'settings', 'hero'), {
       baseImage: BG_IMAGE_1,
       revealImage: BG_IMAGE_2,
+      allowedAdminEmails: ['aldoaldiles@gmail.com'],
     });
     await batch.commit();
   };
