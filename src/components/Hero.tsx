@@ -132,8 +132,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
               </div>
               <div className="text-gray-500 font-normal text-xs mt-1.5 tracking-normal normal-case">
                 {lang === 'en'
-                  ? 'Official Tourism Portal for West Sumatra — Land of Minangkabau Culture & Wonders.'
-                  : 'Portal Resmi Pariwisata Provinsi Sumatera Barat — Surga Wisata & Budaya Minangkabau.'}
+                  ? 'Official Tourism Portal for West Sumatra.'
+                  : 'Portal Resmi Pariwisata Provinsi Sumatera Barat.'}
               </div>
             </div>
           </div>
