@@ -54,7 +54,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   
   // Auth state & Admin Whitelist
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [password, setPassword] = useState<string>('');
   const [loginError, setLoginError] = useState<string | null>(null);
   const [allowedAdminEmails, setAllowedAdminEmails] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
@@ -154,7 +153,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   };
   
   const handleArrayChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, name: string) => {
-     // for arrays like highlights (comma separated in edit mode)
      const val = e.target.value.split('\n').map(v => v.trim()).filter(Boolean);
      setFormData((prev: any) => ({ ...prev, [name]: val }));
   };
@@ -174,7 +172,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   const handleSave = async () => {
     try {
       if (!formData.id) {
-        // new item
         formData.id = `item_${Date.now()}`;
       }
       const colName = getCollectionName();
@@ -239,16 +236,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
     return () => unsub();
   }, [allowedAdminEmails]);
 
-  const handlePasswordLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === 'admin123') {
-      setIsAuthenticated(true);
-      setLoginError(null);
-    } else {
-      setLoginError('Kata sandi salah.');
-    }
-  };
-
   const handleGoogleLogin = async () => {
     try {
       setLoginError(null);
@@ -267,9 +254,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
     } catch (error: any) {
       console.warn("Google Auth popup error:", error);
       if (error?.code === 'auth/popup-blocked' || error?.code === 'auth/cancelled-popup-request') {
-        setLoginError('Popup diblokir oleh browser / iframe. Silakan gunakan Kata Sandi Admin.');
+        setLoginError('Popup diblokir oleh browser. Silakan izinkan popup untuk login dengan Akun Google.');
       } else {
-        setLoginError('Gagal masuk Google. Silakan gunakan Kata Sandi Admin.');
+        setLoginError('Gagal masuk dengan Google. Silakan coba lagi.');
       }
     }
   };
@@ -285,45 +272,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-white p-6 rounded-lg">
-        <div className="w-full max-w-sm border border-gray-200 rounded-lg p-6 shadow-xs text-center">
-          <h3 className="font-bold text-sm uppercase tracking-wider font-jakarta mb-2">Otentikasi Admin</h3>
-          <p className="text-[10px] text-gray-500 mb-6">Silakan masukkan kata sandi admin (default: admin123) atau masuk dengan akun Google.</p>
-          
-          <form onSubmit={handlePasswordLogin} className="flex flex-col gap-3">
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Kata Sandi (admin123)..."
-              className="w-full bg-gray-50 border border-gray-300 rounded p-2 text-xs text-center focus:outline-none focus:border-black transition-colors"
-              autoFocus
-            />
-            {loginError && <p className="text-[10px] text-red-600 font-bold m-0 p-0">{loginError}</p>}
-            <button 
-              type="submit" 
-              className="bg-black text-white px-4 py-2.5 rounded text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors"
-            >
-              Masuk dengan Kata Sandi
-            </button>
-          </form>
-
-          <div className="relative my-4 flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-            <span className="relative bg-white px-2 text-[10px] text-gray-400 uppercase">atau</span>
+      <div className="flex flex-col items-center justify-center h-full bg-white p-6 rounded-lg font-jakarta">
+        <div className="w-full max-w-sm border border-gray-200 rounded-xl p-6 shadow-md text-center bg-white space-y-4">
+          <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-100">
+            🛡️
           </div>
+          <div>
+            <h3 className="font-orbitron font-extrabold text-sm uppercase tracking-wider text-black">
+              Otentikasi Admin Terlindungi
+            </h3>
+            <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">
+              Masuk menggunakan Akun Google resmi yang terdaftar sebagai Admin.
+            </p>
+          </div>
+
+          {loginError && (
+            <div className="p-3 bg-red-50 text-red-700 text-[11px] font-bold rounded-lg border border-red-200 text-left animate-shake">
+              {loginError}
+            </div>
+          )}
 
           <button 
             type="button" 
             onClick={handleGoogleLogin}
-            className="w-full bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-gray-50 transition-colors cursor-pointer"
+            className="w-full bg-black text-white py-3 px-4 rounded-lg font-jakarta font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
           >
-            Masuk dengan Google
+            <span>🔐 Masuk Dengan Akun Google</span>
           </button>
 
-          <button onClick={() => dataStore.seedData()} className="mt-8 text-[9px] text-gray-400 hover:text-black uppercase cursor-pointer">
-            [Seed Database (Run Once)]
-          </button>
+          <div className="pt-2 text-[10px] text-gray-400 border-t border-gray-100">
+            Email Terdaftar: <strong className="text-gray-700 font-mono">{allowedAdminEmails.join(', ')}</strong>
+          </div>
         </div>
       </div>
     );
