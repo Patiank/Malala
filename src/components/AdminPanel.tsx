@@ -67,7 +67,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
         console.warn('Failed to parse allowed admin emails:', e);
       }
     }
-    return ['aldoaldiles@gmail.com', 'patiank@gmail.com'];
+    return ['aldoaldiles@gmail.com'];
   });
   const [newAdminEmail, setNewAdminEmail] = useState<string>('');
 
@@ -347,10 +347,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
               </button>
             </form>
           )}
-
-          <div className="pt-2 text-[10px] text-gray-400 border-t border-gray-100">
-            Email Terdaftar: <strong className="text-gray-700 font-mono">{allowedAdminEmails.join(', ')}</strong>
-          </div>
         </div>
       </div>
     );
