@@ -799,88 +799,86 @@ export const Drawers: React.FC<DrawersProps> = ({
 
           {/* Sub-Menu Navigation Bar across main categories */}
           {['destinations', 'culture', 'culinary', 'events', 'download'].includes(activeDrawer) && (
-            <div className="bg-gray-50/90 border border-gray-200 p-2.5 rounded-2xl shadow-2xs space-y-2 font-jakarta mb-5 shrink-0 w-full">
+            <div className="bg-gray-50/90 border border-gray-200 p-2 rounded-xl shadow-2xs space-y-1.5 font-jakarta mb-5 shrink-0 w-full">
               <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-500 flex items-center gap-1.5">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-500 flex items-center gap-1">
                   <span>🗺️</span>
                   <span>{lang === 'en' ? 'Sub-Menu Categories:' : 'Sub-Menu Kategori Wisata:'}</span>
                 </span>
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider hidden sm:inline">
-                  {lang === 'en' ? 'Swipe / Scroll ▶' : 'Geser ▶'}
-                </span>
               </div>
 
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-0.5 scrollbar-none text-xs w-full">
+              {/* 6 Category Buttons Fitted Perfectly Without Swipe */}
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-1.5 w-full text-[10px] sm:text-[10.5px]">
                 <button
                   onClick={() => onOpenDrawer?.('destinations')}
-                  className={`px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
                     activeDrawer === 'destinations'
-                      ? 'bg-red-600 text-white shadow-md ring-2 ring-red-300'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black shadow-2xs'
+                      ? 'bg-red-600 text-white shadow-xs font-extrabold'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
                   }`}
                 >
-                  <span className="text-sm">🏔️</span>
-                  <span>{translations[lang].navDestinations}</span>
+                  <span className="text-xs">🏔️</span>
+                  <span className="truncate">{translations[lang].navDestinations}</span>
                 </button>
 
                 <button
                   onClick={() => onOpenDrawer?.('culture')}
-                  className={`px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
                     activeDrawer === 'culture'
-                      ? 'bg-purple-600 text-white shadow-md ring-2 ring-purple-300'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black shadow-2xs'
+                      ? 'bg-purple-600 text-white shadow-xs font-extrabold'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
                   }`}
                 >
-                  <span className="text-sm">🏛️</span>
-                  <span>{translations[lang].navCulture}</span>
+                  <span className="text-xs">🏛️</span>
+                  <span className="truncate">{translations[lang].navCulture}</span>
                 </button>
 
                 <button
                   onClick={() => onOpenDrawer?.('culinary')}
-                  className={`px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
                     activeDrawer === 'culinary'
-                      ? 'bg-amber-600 text-white shadow-md ring-2 ring-amber-300'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black shadow-2xs'
+                      ? 'bg-amber-600 text-white shadow-xs font-extrabold'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
                   }`}
                 >
-                  <span className="text-sm">🍲</span>
-                  <span>{translations[lang].navCulinary}</span>
+                  <span className="text-xs">🍲</span>
+                  <span className="truncate">{translations[lang].navCulinary}</span>
                 </button>
 
                 <button
                   onClick={() => onOpenDrawer?.('events')}
-                  className={`px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
                     activeDrawer === 'events'
-                      ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black shadow-2xs'
+                      ? 'bg-blue-600 text-white shadow-xs font-extrabold'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
                   }`}
                 >
-                  <span className="text-sm">📅</span>
-                  <span>{translations[lang].navEvents}</span>
+                  <span className="text-xs">📅</span>
+                  <span className="truncate">{translations[lang].navEvents}</span>
                 </button>
 
                 <button
                   onClick={() => onOpenDrawer?.('download')}
-                  className={`px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
                     activeDrawer === 'download'
-                      ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-300'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black shadow-2xs'
+                      ? 'bg-emerald-600 text-white shadow-xs font-extrabold'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
                   }`}
                 >
-                  <span className="text-sm">📥</span>
-                  <span>{translations[lang].navDownloads}</span>
+                  <span className="text-xs">📥</span>
+                  <span className="truncate">{translations[lang].navDownloads}</span>
                 </button>
 
                 <button
                   onClick={() => onOpenDrawer?.('map')}
-                  className={`px-3.5 py-2 rounded-xl font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 shrink-0 ${
+                  className={`px-1.5 py-1.5 sm:px-2 sm:py-2 rounded-lg font-bold uppercase tracking-tight transition-all cursor-pointer flex items-center justify-center gap-1 text-center ${
                     activeDrawer === 'map'
-                      ? 'bg-red-700 text-white shadow-md ring-2 ring-red-400'
-                      : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-600 hover:text-white shadow-2xs'
+                      ? 'bg-red-700 text-white shadow-xs font-extrabold'
+                      : 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-600 hover:text-white'
                   }`}
                 >
-                  <span className="text-sm">🗺️</span>
-                  <span>{translations[lang].navMap}</span>
+                  <span className="text-xs">🗺️</span>
+                  <span className="truncate">{translations[lang].navMap}</span>
                 </button>
               </div>
             </div>
