@@ -104,6 +104,51 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
 
     const bounds = L.latLngBounds([]);
 
+    // Helper to build popup DOM element with direct click event binding
+    const buildPopupContent = (
+      imageUrl: string,
+      tagText: string,
+      tagColor: string,
+      titleText: string,
+      onDetailClick: () => void
+    ) => {
+      const container = document.createElement('div');
+      container.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
+
+      const imgWrapper = document.createElement('div');
+      imgWrapper.style.cssText = 'height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;';
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = titleText;
+      img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+      imgWrapper.appendChild(img);
+
+      const tag = document.createElement('div');
+      tag.style.cssText = `font-size: 9px; font-weight: 800; text-transform: uppercase; color: ${tagColor}; letter-spacing: 0.05em;`;
+      tag.textContent = tagText;
+
+      const title = document.createElement('div');
+      title.style.cssText = "font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;";
+      title.textContent = titleText;
+
+      const btn = document.createElement('button');
+      btn.style.cssText = 'width: 100%; margin-top: 8px; background: #000; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;';
+      btn.innerHTML = `<span>${translations[lang].btnDetail}</span> <span>&rarr;</span>`;
+      
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onDetailClick();
+      };
+
+      container.appendChild(imgWrapper);
+      container.appendChild(tag);
+      container.appendChild(title);
+      container.appendChild(btn);
+
+      return container;
+    };
+
     // 1. Destinations Markers (Red Pin)
     if (activeFilter === 'all' || activeFilter === 'destinations') {
       destinations.forEach((item) => {
@@ -114,51 +159,15 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
           const icon = createPinIcon('#dc2626', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏔️');
 
           const marker = L.marker([item.lat, item.lng], { icon });
-          
-          const popupContent = document.createElement('div');
-          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
-          popupContent.innerHTML = `
-            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
-              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
-            </div>
-            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #dc2626; letter-spacing: 0.05em;">
-              📍 ${category} &bull; ${regency}
-            </div>
-            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
-              ${title}
-            </div>
-            <button id="btn-detail-${item.id}" style="
-              width: 100%;
-              margin-top: 8px;
-              background: #000;
-              color: #fff;
-              border: none;
-              padding: 6px 12px;
-              border-radius: 4px;
-              font-size: 10px;
-              font-weight: 800;
-              text-transform: uppercase;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 4px;
-            ">
-              <span>${translations[lang].btnDetail}</span>
-              <span>&rarr;</span>
-            </button>
-          `;
+          const popupEl = buildPopupContent(
+            item.imageUrl,
+            `📍 ${category} • ${regency}`,
+            '#dc2626',
+            title,
+            () => onSelectDestination(item)
+          );
 
-          marker.bindPopup(popupContent);
-          marker.on('popupopen', () => {
-            const btn = document.getElementById(`btn-detail-${item.id}`);
-            if (btn) {
-              btn.onclick = () => {
-                onSelectDestination(item);
-              };
-            }
-          });
-
+          marker.bindPopup(popupEl);
           markersGroup.addLayer(marker);
           bounds.extend([item.lat, item.lng]);
         }
@@ -170,56 +179,19 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
       cultureItems.forEach((item) => {
         if (item.lat && item.lng) {
           const title = isEn && item.titleEn ? item.titleEn : item.title;
-          const category = isEn && item.categoryEn ? item.categoryEn : item.category;
           const origin = isEn && item.originEn ? item.originEn : item.origin;
           const icon = createPinIcon('#9333ea', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🏛️');
 
           const marker = L.marker([item.lat, item.lng], { icon });
+          const popupEl = buildPopupContent(
+            item.imageUrl,
+            `🏛️ BUDAYA • ${origin}`,
+            '#9333ea',
+            title,
+            () => onSelectCulture(item)
+          );
 
-          const popupContent = document.createElement('div');
-          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
-          popupContent.innerHTML = `
-            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
-              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
-            </div>
-            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #9333ea; letter-spacing: 0.05em;">
-              🏛️ BUDAYA &bull; ${origin}
-            </div>
-            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
-              ${title}
-            </div>
-            <button id="btn-culture-${item.id}" style="
-              width: 100%;
-              margin-top: 8px;
-              background: #000;
-              color: #fff;
-              border: none;
-              padding: 6px 12px;
-              border-radius: 4px;
-              font-size: 10px;
-              font-weight: 800;
-              text-transform: uppercase;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 4px;
-            ">
-              <span>${translations[lang].btnDetail}</span>
-              <span>&rarr;</span>
-            </button>
-          `;
-
-          marker.bindPopup(popupContent);
-          marker.on('popupopen', () => {
-            const btn = document.getElementById(`btn-culture-${item.id}`);
-            if (btn) {
-              btn.onclick = () => {
-                onSelectCulture(item);
-              };
-            }
-          });
-
+          marker.bindPopup(popupEl);
           markersGroup.addLayer(marker);
           bounds.extend([item.lat, item.lng]);
         }
@@ -235,51 +207,15 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
           const icon = createPinIcon('#d97706', title.length > 18 ? `${title.slice(0, 18)}...` : title, '🍲');
 
           const marker = L.marker([item.lat, item.lng], { icon });
+          const popupEl = buildPopupContent(
+            item.imageUrl,
+            `🍲 KULINER • ${origin}`,
+            '#d97706',
+            title,
+            () => onSelectCulinary(item)
+          );
 
-          const popupContent = document.createElement('div');
-          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
-          popupContent.innerHTML = `
-            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
-              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
-            </div>
-            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #d97706; letter-spacing: 0.05em;">
-              🍲 KULINER &bull; ${origin}
-            </div>
-            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
-              ${title}
-            </div>
-            <button id="btn-culinary-${item.id}" style="
-              width: 100%;
-              margin-top: 8px;
-              background: #000;
-              color: #fff;
-              border: none;
-              padding: 6px 12px;
-              border-radius: 4px;
-              font-size: 10px;
-              font-weight: 800;
-              text-transform: uppercase;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 4px;
-            ">
-              <span>${translations[lang].btnDetail}</span>
-              <span>&rarr;</span>
-            </button>
-          `;
-
-          marker.bindPopup(popupContent);
-          marker.on('popupopen', () => {
-            const btn = document.getElementById(`btn-culinary-${item.id}`);
-            if (btn) {
-              btn.onclick = () => {
-                onSelectCulinary(item);
-              };
-            }
-          });
-
+          marker.bindPopup(popupEl);
           markersGroup.addLayer(marker);
           bounds.extend([item.lat, item.lng]);
         }
@@ -295,51 +231,15 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
           const icon = createPinIcon('#2563eb', title.length > 18 ? `${title.slice(0, 18)}...` : title, '📅');
 
           const marker = L.marker([item.lat, item.lng], { icon });
+          const popupEl = buildPopupContent(
+            item.imageUrl,
+            `📅 EVENT • ${schedule}`,
+            '#2563eb',
+            title,
+            () => onSelectEvent(item)
+          );
 
-          const popupContent = document.createElement('div');
-          popupContent.className = 'font-jakarta space-y-2 p-1 min-w-[200px]';
-          popupContent.innerHTML = `
-            <div style="height: 100px; width: 100%; border-radius: 6px; overflow: hidden; background: #f3f4f6; margin-bottom: 6px;">
-              <img src="${item.imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover;" />
-            </div>
-            <div style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2563eb; letter-spacing: 0.05em;">
-              📅 EVENT &bull; ${schedule}
-            </div>
-            <div style="font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800; color: #000; text-transform: uppercase; line-height: 1.2;">
-              ${title}
-            </div>
-            <button id="btn-event-${item.id}" style="
-              width: 100%;
-              margin-top: 8px;
-              background: #000;
-              color: #fff;
-              border: none;
-              padding: 6px 12px;
-              border-radius: 4px;
-              font-size: 10px;
-              font-weight: 800;
-              text-transform: uppercase;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 4px;
-            ">
-              <span>${translations[lang].btnDetail}</span>
-              <span>&rarr;</span>
-            </button>
-          `;
-
-          marker.bindPopup(popupContent);
-          marker.on('popupopen', () => {
-            const btn = document.getElementById(`btn-event-${item.id}`);
-            if (btn) {
-              btn.onclick = () => {
-                onSelectEvent(item);
-              };
-            }
-          });
-
+          marker.bindPopup(popupEl);
           markersGroup.addLayer(marker);
           bounds.extend([item.lat, item.lng]);
         }

@@ -718,32 +718,30 @@ export const Drawers: React.FC<DrawersProps> = ({
 
   if (!activeDrawer) return null;
 
-  if (activeDrawer === 'map') {
-    return (
-      <InteractiveMapModal
-        isOpen={true}
-        onClose={onClose}
-        lang={lang}
-        destinations={destinations}
-        cultureItems={cultureItems}
-        culinaryItems={culinaryItems}
-        eventItems={eventItems}
-        onSelectDestination={(item) => setSelectedDestination(item)}
-        onSelectCulture={(item) => setSelectedCulture(item)}
-        onSelectCulinary={(item) => setSelectedCulinary(item)}
-        onSelectEvent={(item) => setSelectedEvent(item)}
-      />
-    );
-  }
-
   return (
     <>
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[60] transition-opacity duration-300 animate-fade-in cursor-pointer"
-        aria-hidden="true"
-      />
+      {activeDrawer === 'map' ? (
+        <InteractiveMapModal
+          isOpen={true}
+          onClose={onClose}
+          lang={lang}
+          destinations={destinations}
+          cultureItems={cultureItems}
+          culinaryItems={culinaryItems}
+          eventItems={eventItems}
+          onSelectDestination={(item) => setSelectedDestination(item)}
+          onSelectCulture={(item) => setSelectedCulture(item)}
+          onSelectCulinary={(item) => setSelectedCulinary(item)}
+          onSelectEvent={(item) => setSelectedEvent(item)}
+        />
+      ) : (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={onClose}
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[60] transition-opacity duration-300 animate-fade-in cursor-pointer"
+            aria-hidden="true"
+          />
 
       {/* Drawer Outer Wrapper - TAKES UP HALF THE SCREEN (w-full md:w-1/2 lg:w-1/2) */}
       <div
@@ -1674,10 +1672,12 @@ export const Drawers: React.FC<DrawersProps> = ({
           Dinas Pariwisata Provinsi Sumatera Barat © 2026 — Visit Wonderful West Sumatra
         </div>
       </div>
+      </>
+      )}
 
       {/* MODAL INFORMATION DIALOG FOR DESTINATIONS */}
       {selectedDestination && (
-        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white max-w-lg w-full rounded-xl overflow-hidden shadow-2xl border border-gray-200 animate-scale-up space-y-4 p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setSelectedDestination(null)}
@@ -1770,7 +1770,7 @@ export const Drawers: React.FC<DrawersProps> = ({
 
       {/* MODAL INFORMATION DIALOG FOR CULTURE */}
       {selectedCulture && (
-        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white max-w-lg w-full rounded-xl overflow-hidden shadow-2xl border border-gray-200 animate-scale-up space-y-4 p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setSelectedCulture(null)}
@@ -1853,7 +1853,7 @@ export const Drawers: React.FC<DrawersProps> = ({
 
       {/* MODAL INFORMATION DIALOG FOR CULINARY */}
       {selectedCulinary && (
-        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white max-w-lg w-full rounded-xl overflow-hidden shadow-2xl border border-gray-200 animate-scale-up space-y-4 p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setSelectedCulinary(null)}
@@ -1934,7 +1934,7 @@ export const Drawers: React.FC<DrawersProps> = ({
 
       {/* MODAL INFORMATION DIALOG FOR EVENTS */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white max-w-lg w-full rounded-xl overflow-hidden shadow-2xl border border-gray-200 animate-scale-up space-y-4 p-6 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setSelectedEvent(null)}
