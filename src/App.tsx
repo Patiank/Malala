@@ -137,6 +137,7 @@ export default function App() {
       <Drawers
         activeDrawer={activeDrawer}
         onClose={handleCloseDrawer}
+        onOpenDrawer={handleOpenDrawer}
         savedIds={savedIds}
         onToggleSave={handleToggleSave}
         dataStore={dataStore}

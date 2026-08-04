@@ -215,6 +215,7 @@ DINAS PARIWISATA PROVINSI SUMATERA BARAT
 interface DrawersProps {
   activeDrawer: DrawerType;
   onClose: () => void;
+  onOpenDrawer?: (type: DrawerType) => void;
   savedIds: string[];
   onToggleSave: (id: string, title: string) => void;
   dataStore: any;
@@ -224,6 +225,7 @@ interface DrawersProps {
 export const Drawers: React.FC<DrawersProps> = ({
   activeDrawer,
   onClose,
+  onOpenDrawer,
   savedIds,
   onToggleSave,
   dataStore,
@@ -794,6 +796,87 @@ export const Drawers: React.FC<DrawersProps> = ({
 
         {/* Scrollable Main Content */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
+
+          {/* Sub-Menu Navigation Bar across main categories */}
+          {['destinations', 'culture', 'culinary', 'events', 'download'].includes(activeDrawer) && (
+            <div className="bg-gray-50 border border-gray-200 p-2 rounded-xl shadow-2xs space-y-1.5 font-jakarta mb-4 shrink-0">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-500 flex items-center gap-1">
+                  <span>🗺️</span>
+                  <span>{lang === 'en' ? 'Sub-Menu Categories' : 'Sub-Menu Kategori Wisata:'}</span>
+                </span>
+                <button
+                  onClick={() => onOpenDrawer?.('map')}
+                  className="text-[10px] font-bold text-red-600 hover:text-red-700 uppercase tracking-wider underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span>📍</span>
+                  <span>{translations[lang].navMap}</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+                <button
+                  onClick={() => onOpenDrawer?.('destinations')}
+                  className={`px-3 py-1.5 rounded-lg font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    activeDrawer === 'destinations'
+                      ? 'bg-red-600 text-white shadow-xs'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
+                  }`}
+                >
+                  <span>🏔️</span>
+                  <span>{translations[lang].navDestinations}</span>
+                </button>
+
+                <button
+                  onClick={() => onOpenDrawer?.('culture')}
+                  className={`px-3 py-1.5 rounded-lg font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    activeDrawer === 'culture'
+                      ? 'bg-purple-600 text-white shadow-xs'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
+                  }`}
+                >
+                  <span>🏛️</span>
+                  <span>{translations[lang].navCulture}</span>
+                </button>
+
+                <button
+                  onClick={() => onOpenDrawer?.('culinary')}
+                  className={`px-3 py-1.5 rounded-lg font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    activeDrawer === 'culinary'
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
+                  }`}
+                >
+                  <span>🍲</span>
+                  <span>{translations[lang].navCulinary}</span>
+                </button>
+
+                <button
+                  onClick={() => onOpenDrawer?.('events')}
+                  className={`px-3 py-1.5 rounded-lg font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    activeDrawer === 'events'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
+                  }`}
+                >
+                  <span>📅</span>
+                  <span>{translations[lang].navEvents}</span>
+                </button>
+
+                <button
+                  onClick={() => onOpenDrawer?.('download')}
+                  className={`px-3 py-1.5 rounded-lg font-extrabold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                    activeDrawer === 'download'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100 hover:text-black'
+                  }`}
+                >
+                  <span>📥</span>
+                  <span>{translations[lang].navDownloads}</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* =================================================== */}
           {/* 1. DESTINASI WISATA DRAWER                          */}

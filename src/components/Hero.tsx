@@ -73,9 +73,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
               />
             </button>
 
-            {/* Mulai Jelajah Main Button - Opens Category Selection Modal */}
+            {/* Mulai Jelajah Main Button - Opens Destinations Sub-menu directly */}
             <button
-              onClick={() => setIsExploreModalOpen(true)}
+              onClick={() => onOpenDrawer('destinations')}
               className="group inline-flex items-center justify-center border border-gray-400 bg-white/90 backdrop-blur-xs rounded-md font-jakarta font-bold uppercase tracking-[0.16em] text-black hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200 cursor-pointer focus:outline-none shadow-sm"
               style={{
                 fontSize: 'var(--body)',
