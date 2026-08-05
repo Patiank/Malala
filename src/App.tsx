@@ -8,6 +8,7 @@ import { Toast } from './components/Toast';
 import { DrawerType, ToastNotice } from './types';
 import { useData } from './data/useData';
 import { Language } from './lib/translations';
+import { AudioPlayer } from './components/AudioPlayer';
 
 export default function App() {
   const [activeDrawer, setActiveDrawer] = useState<DrawerType>(null);
@@ -182,6 +183,13 @@ export default function App() {
       <Toast
         toasts={toasts}
         onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+      />
+
+      {/* MP3 Audio Player */}
+      <AudioPlayer
+        lang={lang}
+        customAudioUrl={dataStore.appSettings.bgAudioUrl}
+        customAudioTitle={dataStore.appSettings.bgAudioTitle}
       />
     </div>
   );

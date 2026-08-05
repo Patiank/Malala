@@ -132,6 +132,9 @@ export interface AppSettings {
   heroTextColor?: string;
   heroTextTheme?: 'black' | 'white' | 'red' | 'gold' | 'custom';
   heroTextShadow?: boolean;
+  bgAudioUrl?: string;
+  bgAudioTitle?: string;
+  bgAudioAutoPlay?: boolean;
 }
 
 export interface FormAIItineraryActivity {
