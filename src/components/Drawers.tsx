@@ -617,7 +617,7 @@ export const Drawers: React.FC<DrawersProps> = ({
             aria-hidden="true"
           />
 
-      {/* Drawer Outer Wrapper - TAKES UP HALF THE SCREEN (w-full md:w-1/2 lg:w-1/2) */}
+      {/* Drawer Outer Wrapper - HOT INFO IS 1/4 SCREEN WIDTH (w-1/4), OTHER DRAWERS ARE HALF SCREEN WIDTH (w-1/2) */}
       <div
         onMouseEnter={() => {
           if (activeDrawer === 'hotinfo' && onMouseEnterDrawer) {
@@ -629,11 +629,11 @@ export const Drawers: React.FC<DrawersProps> = ({
             onMouseLeaveDrawer();
           }
         }}
-        className={`fixed top-0 bottom-0 z-[70] w-full md:w-1/2 lg:w-1/2 bg-white shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 ${
+        className={`fixed top-0 bottom-0 z-[70] ${
           activeDrawer === 'hotinfo'
-            ? 'left-0 border-r border-gray-200 animate-drawer-slide-left'
-            : 'right-0 border-l border-gray-200 animate-drawer-slide-right'
-        }`}
+            ? 'w-full sm:w-1/3 md:w-1/4 lg:w-1/4 xl:w-1/4 left-0 border-r border-gray-200 animate-drawer-slide-left'
+            : 'w-full md:w-1/2 lg:w-1/2 right-0 border-l border-gray-200 animate-drawer-slide-right'
+        } bg-white shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300`}
       >
         
         {/* Header Drawer */}
