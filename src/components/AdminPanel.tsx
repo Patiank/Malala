@@ -3,6 +3,7 @@ import { Destination, CultureItem, CulinaryItem, EventItem } from '../types';
 import { Trash2, Plus, Edit3, Check, X } from 'lucide-react';
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { saveAudioBlob, getDirectAudioUrl } from '../lib/audioStore';
 
 interface AdminPanelProps {
   dataStore: any;
@@ -704,14 +705,29 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          // Save blob to IndexedDB for reliable playback across page reloads
+                          saveAudioBlob('custom_bg_audio', file).catch(() => {});
+
+                          // Create object URL for instant preview
+                          const objectUrl = URL.createObjectURL(file);
+                          const autoTitle = file.name.replace(/\.[^/.]+$/, '');
+
+                          setSettingsFormData(prev => ({
+                            ...prev,
+                            bgAudioUrl: objectUrl,
+                            bgAudioTitle: prev.bgAudioTitle || autoTitle
+                          }));
+
+                          // Also convert to data URL for storage fallback
                           const reader = new FileReader();
                           reader.onload = (evt) => {
                             const res = evt.target?.result as string;
-                            setSettingsFormData(prev => ({
-                              ...prev,
-                              bgAudioUrl: res,
-                              bgAudioTitle: prev.bgAudioTitle || file.name.replace(/\.[^/.]+$/, '')
-                            }));
+                            if (res) {
+                              setSettingsFormData(prev => ({
+                                ...prev,
+                                bgAudioUrl: res,
+                              }));
+                            }
                           };
                           reader.readAsDataURL(file);
                         }
@@ -755,9 +771,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                         Preview Suara Audio:
                       </span>
                       <audio
+                        key={settingsFormData.bgAudioUrl}
                         controls
-                        src={settingsFormData.bgAudioUrl}
-                        className="w-full h-8"
+                        src={getDirectAudioUrl(settingsFormData.bgAudioUrl)}
+                        className="w-full h-10"
                       />
                     </div>
                   )}

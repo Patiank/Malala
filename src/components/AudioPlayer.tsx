@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Music, Play, Pause, Volume2, VolumeX, Radio, ListMusic, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { Language } from '../lib/translations';
-import { getDirectDriveUrl } from '../data/content';
+import { getDirectAudioUrl, getAudioBlob } from '../lib/audioStore';
 
 interface AudioPlayerProps {
   lang: Language;
@@ -54,11 +54,27 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [showPlaylist, setShowPlaylist] = useState<boolean>(false);
   const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0);
+  const [blobAudioUrl, setBlobAudioUrl] = useState<string>('');
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Active track determination with direct drive URL conversion
-  const formattedCustomUrl = customAudioUrl ? getDirectDriveUrl(customAudioUrl) : '';
+  // Load IndexedDB audio blob if available for uploaded files
+  useEffect(() => {
+    let isMounted = true;
+    getAudioBlob('custom_bg_audio').then((blob) => {
+      if (blob && isMounted) {
+        const objectUrl = URL.createObjectURL(blob);
+        setBlobAudioUrl(objectUrl);
+      }
+    }).catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, [customAudioUrl]);
+
+  // Active track determination with direct audio URL conversion
+  const formattedCustomUrl = blobAudioUrl || (customAudioUrl ? getDirectAudioUrl(customAudioUrl) : '');
   const tracks = DEFAULT_TRACKS;
   const currentTrack = formattedCustomUrl
     ? {
@@ -224,6 +240,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     <div className="fixed bottom-5 right-5 z-40 select-none">
       <audio
         ref={audioRef}
+        key={currentTrack.url}
         src={currentTrack.url}
         preload="metadata"
       />
