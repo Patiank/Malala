@@ -36,6 +36,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
     heroTextColor: appSettings?.heroTextColor || '#000000',
     heroTextTheme: appSettings?.heroTextTheme || 'black',
     heroTextShadow: appSettings?.heroTextShadow !== undefined ? appSettings.heroTextShadow : true,
+    bgAudioUrl: appSettings?.bgAudioUrl || '',
+    bgAudioTitle: appSettings?.bgAudioTitle || '',
+    bgAudioAutoPlay: appSettings?.bgAudioAutoPlay !== undefined ? appSettings.bgAudioAutoPlay : true,
   });
 
   useEffect(() => {
@@ -48,6 +51,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
         heroTextColor: appSettings.heroTextColor || '#000000',
         heroTextTheme: appSettings.heroTextTheme || 'black',
         heroTextShadow: appSettings.heroTextShadow !== undefined ? appSettings.heroTextShadow : true,
+        bgAudioUrl: appSettings.bgAudioUrl || '',
+        bgAudioTitle: appSettings.bgAudioTitle || '',
+        bgAudioAutoPlay: appSettings.bgAudioAutoPlay !== undefined ? appSettings.bgAudioAutoPlay : true,
       });
     }
   }, [appSettings]);
@@ -153,9 +159,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
   const handleSaveSettings = async () => {
     try {
       await saveSettings(settingsFormData);
-      showSuccess('Pengaturan gambar latar belakang berhasil disimpan!');
+      showSuccess('Pengaturan latar belakang & musik audio berhasil disimpan!');
     } catch (e) {
-      setAdminError('Gagal menyimpan pengaturan latar belakang');
+      setAdminError('Gagal menyimpan pengaturan latar belakang & musik');
     }
   };
 
@@ -677,11 +683,104 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 </div>
               </div>
 
+              {/* Pengaturan Musik / Audio MP3 Latar Halaman Awal */}
+              <div className="pt-4 border-t border-gray-200 space-y-3">
+                <label className="block text-[11px] font-bold uppercase text-gray-800 mb-1">
+                  🎵 Pengaturan Musik / Audio MP3 Latar Halaman Awal
+                </label>
+                <p className="text-[10px] text-gray-500 mb-3">
+                  Kelola lagu atau instrumen musik MP3 yang diputar pada pemutar audio halaman awal website.
+                </p>
+
+                {/* Upload File MP3 (Lokal) & URL Input */}
+                <div className="bg-white border border-gray-200 p-3 rounded-md space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      1. Upload File MP3 (Lokal)
+                    </label>
+                    <input
+                      type="file"
+                      accept="audio/mp3,audio/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            const res = evt.target?.result as string;
+                            setSettingsFormData(prev => ({
+                              ...prev,
+                              bgAudioUrl: res,
+                              bgAudioTitle: prev.bgAudioTitle || file.name.replace(/\.[^/.]+$/, '')
+                            }));
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 cursor-pointer"
+                    />
+                    <p className="text-[10px] text-gray-500 mt-1">Pilih file audio (.mp3) langsung dari perangkat Anda.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      2. Atau Input URL Audio MP3 Direct Link
+                    </label>
+                    <input
+                      type="text"
+                      name="bgAudioUrl"
+                      value={settingsFormData.bgAudioUrl}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, bgAudioUrl: e.target.value }))}
+                      placeholder="https://example.com/musik_minang.mp3"
+                      className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                      3. Judul / Nama Musik (Akan tampil pada Player)
+                    </label>
+                    <input
+                      type="text"
+                      name="bgAudioTitle"
+                      value={settingsFormData.bgAudioTitle}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, bgAudioTitle: e.target.value }))}
+                      placeholder="Misal: Instrumen Saluang & Talempong Syahdu Minang"
+                      className="w-full bg-white border border-gray-300 rounded p-2 text-xs"
+                    />
+                  </div>
+
+                  {settingsFormData.bgAudioUrl && (
+                    <div className="pt-2 border-t border-gray-100">
+                      <span className="block text-[10px] font-bold uppercase text-gray-500 mb-1.5">
+                        Preview Suara Audio:
+                      </span>
+                      <audio
+                        controls
+                        src={settingsFormData.bgAudioUrl}
+                        className="w-full h-8"
+                      />
+                    </div>
+                  )}
+
+                  <label className="flex items-center gap-2 cursor-pointer pt-1">
+                    <input
+                      type="checkbox"
+                      checked={settingsFormData.bgAudioAutoPlay}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, bgAudioAutoPlay: e.target.checked }))}
+                      className="w-4 h-4 text-red-600 rounded cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-gray-800">
+                      Putar Musik Otomatis Saat Halaman Dibuka (Autoplay)
+                    </span>
+                  </label>
+                </div>
+              </div>
+
               <button
                 onClick={handleSaveSettings}
                 className="w-full bg-black text-white py-2.5 rounded text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-1.5 hover:bg-gray-800 transition-colors cursor-pointer"
               >
-                <Check className="w-4 h-4" /> Simpan Pengaturan Hero & Warna Teks
+                <Check className="w-4 h-4" /> Simpan Pengaturan Hero, Warna Teks & Musik MP3
               </button>
             </div>
 
