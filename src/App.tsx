@@ -151,6 +151,7 @@ export default function App() {
         onToggleLang={handleToggleLang}
         onMouseEnterHotInfo={handleMouseEnterHotInfo}
         onMouseLeaveHotInfo={handleMouseLeaveHotInfo}
+        appSettings={dataStore.appSettings}
       />
 
       {/* Main Hero */}

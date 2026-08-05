@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bookmark, Sparkles, Download, Map, Globe, Menu, X, Flame } from 'lucide-react';
-import { DrawerType } from '../types';
+import { DrawerType, AppSettings } from '../types';
 import { Language, translations } from '../lib/translations';
 
 interface HeaderProps {
@@ -12,6 +12,7 @@ interface HeaderProps {
   onToggleLang: () => void;
   onMouseEnterHotInfo?: () => void;
   onMouseLeaveHotInfo?: () => void;
+  appSettings?: AppSettings;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,9 +24,24 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleLang,
   onMouseEnterHotInfo,
   onMouseLeaveHotInfo,
+  appSettings,
 }) => {
   const t = translations[lang];
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const heroTextColor = appSettings?.heroTextColor || '#000000';
+  const heroTextShadow = appSettings?.heroTextShadow !== false;
+
+  const shadowValue = heroTextShadow
+    ? heroTextColor.toLowerCase() === '#ffffff' || heroTextColor.toLowerCase() === '#fff'
+      ? '0 2px 10px rgba(0,0,0,0.85), 0 0 4px rgba(0,0,0,0.9)'
+      : '0 2px 8px rgba(255,255,255,0.8), 0 0 2px rgba(255,255,255,0.9)'
+    : undefined;
+
+  const headerTextStyle: React.CSSProperties = {
+    color: heroTextColor,
+    textShadow: shadowValue,
+  };
 
   const handleNavClick = (type: DrawerType) => {
     onOpenDrawer(type);
@@ -45,21 +61,24 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Logo (Left) */}
         <button
           onClick={onCloseDrawer}
-          className="font-orbitron font-black text-black tracking-[0.15em] flex flex-col items-start cursor-pointer hover:opacity-80 transition-opacity text-left focus:outline-none"
+          className="font-orbitron font-black tracking-[0.15em] flex flex-col items-start cursor-pointer hover:opacity-80 transition-opacity text-left focus:outline-none"
           style={{ fontSize: 'var(--logo)' }}
           aria-label="WEST SUMATRA TOURISM"
         >
           <div className="flex items-baseline gap-0.5">
-            <span>MALALA</span>
+            <span style={headerTextStyle} className="transition-colors duration-300">MALALA</span>
             <span className="text-red-600 font-extrabold lowercase tracking-tight">.travel</span>
             <span
-              className="font-normal leading-none inline-block -mt-0.5 ml-0.5 text-gray-500"
-              style={{ fontSize: 'var(--logo-deg)' }}
+              className="font-normal leading-none inline-block -mt-0.5 ml-0.5"
+              style={{ fontSize: 'var(--logo-deg)', color: heroTextColor, opacity: 0.7 }}
             >
               ˚
             </span>
           </div>
-          <span className="font-jakarta text-[9px] tracking-[0.25em] text-gray-400 font-semibold -mt-1 uppercase">
+          <span
+            className="font-jakarta text-[9px] tracking-[0.25em] font-semibold -mt-1 uppercase transition-colors duration-300"
+            style={{ color: heroTextColor, opacity: 0.75, textShadow: shadowValue }}
+          >
             {t.logoTagline}
           </span>
         </button>
@@ -120,6 +139,7 @@ export const Header: React.FC<HeaderProps> = ({
               ? 'bg-red-600 text-white border-red-600 font-bold'
               : 'border-transparent text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
+          style={activeDrawer !== 'hotinfo' ? { textShadow: shadowValue } : undefined}
         >
           <Flame className="w-3.5 h-3.5 text-yellow-500 fill-current animate-pulse" />
           <span>{lang === 'en' ? 'Hot Info' : 'Hot Info & Berita'}</span>
@@ -130,8 +150,9 @@ export const Header: React.FC<HeaderProps> = ({
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'destinations'
               ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
+              : 'border-transparent hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
+          style={activeDrawer !== 'destinations' ? headerTextStyle : undefined}
         >
           {t.navDestinations}
         </button>
@@ -141,8 +162,9 @@ export const Header: React.FC<HeaderProps> = ({
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'culture'
               ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
+              : 'border-transparent hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
+          style={activeDrawer !== 'culture' ? headerTextStyle : undefined}
         >
           {t.navCulture}
         </button>
@@ -152,8 +174,9 @@ export const Header: React.FC<HeaderProps> = ({
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'culinary'
               ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
+              : 'border-transparent hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
+          style={activeDrawer !== 'culinary' ? headerTextStyle : undefined}
         >
           {t.navCulinary}
         </button>
@@ -163,8 +186,9 @@ export const Header: React.FC<HeaderProps> = ({
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'events'
               ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
+              : 'border-transparent hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
+          style={activeDrawer !== 'events' ? headerTextStyle : undefined}
         >
           {t.navEvents}
         </button>
@@ -174,8 +198,9 @@ export const Header: React.FC<HeaderProps> = ({
           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
             activeDrawer === 'download'
               ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-black hover:bg-red-600 hover:text-white hover:border-red-600'
+              : 'border-transparent hover:bg-red-600 hover:text-white hover:border-red-600'
           }`}
+          style={activeDrawer !== 'download' ? headerTextStyle : undefined}
         >
           <Download className="w-3.5 h-3.5" />
           <span>{t.navDownloads}</span>
@@ -232,6 +257,7 @@ export const Header: React.FC<HeaderProps> = ({
           className="hidden md:flex relative hover:opacity-60 transition-opacity cursor-pointer items-center justify-center p-1"
           aria-label={`${t.navSaved} (${savedCount})`}
           title={t.savedTitle}
+          style={{ color: heroTextColor, filter: shadowValue ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : undefined }}
         >
           <Bookmark
             strokeWidth={1.75}
