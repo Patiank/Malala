@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bookmark, Sparkles, Download, Map, Globe, Menu, X, Flame } from 'lucide-react';
+import { Bookmark, Sparkles, Download, Map, Globe, Menu, X } from 'lucide-react';
 import { DrawerType, AppSettings } from '../types';
 import { Language, translations } from '../lib/translations';
 
@@ -130,27 +130,6 @@ export const Header: React.FC<HeaderProps> = ({
         } md:flex flex-col md:flex-row absolute md:relative top-full left-0 w-full md:w-auto bg-white md:bg-transparent shadow-xl md:shadow-none p-4 md:p-0 gap-4 md:gap-[var(--gap-nav)] font-jakarta font-semibold uppercase tracking-[0.14em] sm:tracking-[0.18em] items-start md:items-center text-black border-t md:border-none border-gray-100 z-50`}
         style={{ fontSize: 'var(--nav)' }}
       >
-        <button
-          onClick={() => handleNavClick('hotinfo')}
-          onMouseEnter={onMouseEnterHotInfo}
-          onMouseLeave={onMouseLeaveHotInfo}
-          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border font-extrabold transition-all duration-300 cursor-pointer shadow-md group ${
-            activeDrawer === 'hotinfo'
-              ? 'bg-black text-white border-gray-900 ring-2 ring-red-500'
-              : 'bg-red-600 text-white border-red-700 hover:bg-black hover:border-gray-900 hover:scale-105'
-          }`}
-          title={lang === 'en' ? 'Hot Info & Latest News' : 'Hot Info & Berita Terbaru'}
-        >
-          <span className="relative flex items-center justify-center">
-            <Flame className="w-4 h-4 text-yellow-300 fill-current group-hover:scale-125 transition-transform duration-200" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-ping" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full" />
-          </span>
-          <span className="font-orbitron tracking-wider text-[11px]">
-            {lang === 'en' ? 'Hot Info & News' : 'Hot Info & Berita'}
-          </span>
-        </button>
-
         <button
           onClick={() => handleNavClick('destinations')}
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
