@@ -154,7 +154,7 @@ export default function App() {
       />
 
       {/* Main Hero */}
-      <Hero onOpenDrawer={handleOpenDrawer} lang={lang} />
+      <Hero onOpenDrawer={handleOpenDrawer} lang={lang} appSettings={dataStore.appSettings} />
 
       {/* Drawers */}
       <Drawers

@@ -33,6 +33,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
     baseImage: appSettings?.baseImage || '',
     revealImage: appSettings?.revealImage || '',
     baseVideo: appSettings?.baseVideo || '',
+    heroTextColor: appSettings?.heroTextColor || '#000000',
+    heroTextTheme: appSettings?.heroTextTheme || 'black',
+    heroTextShadow: appSettings?.heroTextShadow !== undefined ? appSettings.heroTextShadow : true,
   });
 
   useEffect(() => {
@@ -42,6 +45,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
         baseImage: appSettings.baseImage || '',
         revealImage: appSettings.revealImage || '',
         baseVideo: appSettings.baseVideo || '',
+        heroTextColor: appSettings.heroTextColor || '#000000',
+        heroTextTheme: appSettings.heroTextTheme || 'black',
+        heroTextShadow: appSettings.heroTextShadow !== undefined ? appSettings.heroTextShadow : true,
       });
     }
   }, [appSettings]);
@@ -582,11 +588,100 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 </div>
               )}
 
+              {/* Pengaturan Warna Teks & Kontras Hero (New Feature) */}
+              <div className="pt-4 border-t border-gray-200 space-y-3">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase text-gray-800 mb-1">
+                    🎨 Pengaturan Warna Teks Halaman Utama (Hero Title & Subtitle)
+                  </label>
+                  <p className="text-[10px] text-gray-500 mb-3">
+                    Pilih warna teks judul agar selalu kontras dan jelas terbaca sesuai gambar/video latar belakang yang Anda pasang.
+                  </p>
+
+                  {/* Preset Colors */}
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={() => setSettingsFormData(prev => ({ ...prev, heroTextColor: '#000000', heroTextTheme: 'black' }))}
+                      className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        settingsFormData.heroTextColor === '#000000' ? 'bg-black text-white ring-2 ring-red-500' : 'bg-gray-100 text-black border border-gray-300'
+                      }`}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-black border border-white" />
+                      Hitam (Default Dark)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSettingsFormData(prev => ({ ...prev, heroTextColor: '#ffffff', heroTextTheme: 'white' }))}
+                      className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        settingsFormData.heroTextColor === '#ffffff' ? 'bg-black text-white ring-2 ring-red-500' : 'bg-gray-100 text-gray-800 border border-gray-300'
+                      }`}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-white border border-gray-400" />
+                      Putih (Light Text)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSettingsFormData(prev => ({ ...prev, heroTextColor: '#dc2626', heroTextTheme: 'red' }))}
+                      className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        settingsFormData.heroTextColor === '#dc2626' ? 'bg-black text-white ring-2 ring-red-500' : 'bg-gray-100 text-gray-800 border border-gray-300'
+                      }`}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-red-600" />
+                      Merah Minang (#dc2626)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSettingsFormData(prev => ({ ...prev, heroTextColor: '#d97706', heroTextTheme: 'gold' }))}
+                      className={`px-3 py-1.5 rounded text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                        settingsFormData.heroTextColor === '#d97706' ? 'bg-black text-white ring-2 ring-red-500' : 'bg-gray-100 text-gray-800 border border-gray-300'
+                      }`}
+                    >
+                      <span className="w-3 h-3 rounded-full bg-amber-600" />
+                      Emas Minang (#d97706)
+                    </button>
+                  </div>
+
+                  {/* Custom Color Input */}
+                  <div className="flex items-center gap-3 bg-white p-2 border border-gray-300 rounded mb-3">
+                    <label className="text-xs font-bold text-gray-700">Warna Kustom (Hex):</label>
+                    <input
+                      type="color"
+                      value={settingsFormData.heroTextColor || '#000000'}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, heroTextColor: e.target.value, heroTextTheme: 'custom' }))}
+                      className="w-8 h-8 rounded border-0 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={settingsFormData.heroTextColor || '#000000'}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, heroTextColor: e.target.value, heroTextTheme: 'custom' }))}
+                      className="w-28 bg-gray-50 border border-gray-300 rounded p-1 text-xs font-mono font-bold uppercase"
+                    />
+                  </div>
+
+                  {/* Text Shadow Contrast Toggle */}
+                  <label className="flex items-center gap-2 cursor-pointer pt-1">
+                    <input
+                      type="checkbox"
+                      checked={settingsFormData.heroTextShadow}
+                      onChange={(e) => setSettingsFormData(prev => ({ ...prev, heroTextShadow: e.target.checked }))}
+                      className="w-4 h-4 text-red-600 rounded cursor-pointer"
+                    />
+                    <span className="text-xs font-bold text-gray-800">
+                      Aktifkan Bayangan Teks (Text Shadow) untuk Kontras Maksimal
+                    </span>
+                  </label>
+                </div>
+              </div>
+
               <button
                 onClick={handleSaveSettings}
                 className="w-full bg-black text-white py-2.5 rounded text-xs font-bold uppercase tracking-wider flex justify-center items-center gap-1.5 hover:bg-gray-800 transition-colors cursor-pointer"
               >
-                <Check className="w-4 h-4" /> Simpan Pengaturan Latar Belakang
+                <Check className="w-4 h-4" /> Simpan Pengaturan Hero & Warna Teks
               </button>
             </div>
 

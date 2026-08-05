@@ -129,6 +129,9 @@ export interface AppSettings {
   revealImage?: string;
   baseVideo?: string;
   allowedAdminEmails?: string[];
+  heroTextColor?: string;
+  heroTextTheme?: 'black' | 'white' | 'red' | 'gold' | 'custom';
+  heroTextShadow?: boolean;
 }
 
 export interface FormAIItineraryActivity {

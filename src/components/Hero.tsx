@@ -1,17 +1,37 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Sparkles, Compass, Download, Map, X } from 'lucide-react';
 import { CheckerboardGrid, WireframeGlobe, CornerBracket } from './CustomIcons';
-import { DrawerType } from '../types';
+import { DrawerType, AppSettings } from '../types';
 import { Language, translations } from '../lib/translations';
 
 interface HeroProps {
   onOpenDrawer: (type: DrawerType) => void;
   lang: Language;
+  appSettings?: AppSettings;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang, appSettings }) => {
   const t = translations[lang];
   const [isExploreModalOpen, setIsExploreModalOpen] = useState(false);
+
+  const heroTextColor = appSettings?.heroTextColor || '#000000';
+  const heroTextShadow = appSettings?.heroTextShadow !== false;
+
+  const shadowValue = heroTextShadow
+    ? heroTextColor.toLowerCase() === '#ffffff' || heroTextColor.toLowerCase() === '#fff'
+      ? '0 2px 10px rgba(0,0,0,0.85), 0 0 4px rgba(0,0,0,0.9)'
+      : '0 2px 8px rgba(255,255,255,0.8), 0 0 2px rgba(255,255,255,0.9)'
+    : undefined;
+
+  const heroTextStyle: React.CSSProperties = {
+    color: heroTextColor,
+    textShadow: shadowValue,
+  };
+
+  const bracketStyle: React.CSSProperties = {
+    color: heroTextColor,
+    filter: shadowValue ? 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' : undefined,
+  };
 
   return (
     <>
@@ -25,30 +45,33 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
         {/* Left Block (Headline & Action Buttons) */}
         <div className="flex flex-col justify-center items-start space-y-3.5 max-w-4xl">
           {/* Top-Left Corner Bracket */}
-          <div className="text-black flex items-center gap-3">
+          <div style={bracketStyle} className="flex items-center gap-3">
             <CornerBracket type="TL" />
           </div>
 
           {/* Main Headline */}
           <h1
-            className="font-orbitron font-black text-black uppercase tracking-[0.06em] leading-[1.04] select-none pt-1"
-            style={{ fontSize: 'var(--headline)' }}
+            className="font-orbitron font-black uppercase tracking-[0.06em] leading-[1.04] select-none pt-1 transition-colors duration-300"
+            style={{ ...heroTextStyle, fontSize: 'var(--headline)' }}
           >
             <div>DISCOVER</div>
             <div>WEST SUMATRA</div>
             <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
               <span>PARADISE</span>
-              <CheckerboardGrid className="text-black" />
+              <CheckerboardGrid style={{ color: heroTextColor }} className="transition-colors duration-300" />
             </div>
           </h1>
 
           {/* Subtitle / Description */}
-          <p className="font-jakarta text-gray-700 max-w-xl text-xs sm:text-sm font-medium leading-relaxed pt-1">
+          <p
+            className="font-jakarta max-w-xl text-xs sm:text-sm font-medium leading-relaxed pt-1 transition-colors duration-300"
+            style={heroTextStyle}
+          >
             {t.heroDesc}
           </p>
 
           {/* Bottom-Left Corner Bracket */}
-          <div className="text-black pb-1">
+          <div style={bracketStyle} className="pb-1">
             <CornerBracket type="BL" />
           </div>
 
@@ -99,28 +122,28 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
           }}
         >
           {/* Absolute Corner Brackets framing the box */}
-          <div className="absolute top-0 left-0 text-black">
+          <div style={bracketStyle} className="absolute top-0 left-0">
             <CornerBracket type="TL" />
           </div>
-          <div className="absolute top-0 right-0 text-black">
+          <div style={bracketStyle} className="absolute top-0 right-0">
             <CornerBracket type="TR" />
           </div>
-          <div className="absolute bottom-0 left-0 text-black">
+          <div style={bracketStyle} className="absolute bottom-0 left-0">
             <CornerBracket type="BL" />
           </div>
-          <div className="absolute bottom-0 right-0 text-black">
+          <div style={bracketStyle} className="absolute bottom-0 right-0">
             <CornerBracket type="BR" />
           </div>
 
           {/* Official Tourism Board Metadata */}
           <div className="flex flex-col space-y-4">
-            <div className="text-black flex items-center justify-between">
+            <div style={{ color: heroTextColor }} className="flex items-center justify-between transition-colors duration-300">
               <WireframeGlobe />
             </div>
 
             <div
-              className="font-jakarta font-bold uppercase tracking-[0.16em] text-black leading-tight"
-              style={{ fontSize: 'var(--body)' }}
+              className="font-jakarta font-bold uppercase tracking-[0.16em] leading-tight transition-colors duration-300"
+              style={{ ...heroTextStyle, fontSize: 'var(--body)' }}
             >
               <div>DINAS PARIWISATA</div>
               <div
@@ -130,7 +153,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang }) => {
               >
                 PROVINSI SUMATERA BARAT.
               </div>
-              <div className="text-gray-500 font-normal text-xs mt-1.5 tracking-normal normal-case">
+              <div style={{ color: heroTextColor, opacity: 0.75 }} className="font-normal text-xs mt-1.5 tracking-normal normal-case transition-colors duration-300">
                 {lang === 'en'
                   ? 'Official Tourism Portal for West Sumatra.'
                   : 'Portal Resmi Pariwisata Provinsi Sumatera Barat.'}
