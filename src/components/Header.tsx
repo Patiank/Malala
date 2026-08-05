@@ -134,15 +134,21 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => handleNavClick('hotinfo')}
           onMouseEnter={onMouseEnterHotInfo}
           onMouseLeave={onMouseLeaveHotInfo}
-          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border font-extrabold transition-all duration-300 cursor-pointer shadow-md group ${
             activeDrawer === 'hotinfo'
-              ? 'bg-red-600 text-white border-red-600 font-bold'
-              : 'border-transparent text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600'
+              ? 'bg-black text-white border-gray-900 ring-2 ring-red-500'
+              : 'bg-red-600 text-white border-red-700 hover:bg-black hover:border-gray-900 hover:scale-105'
           }`}
-          style={activeDrawer !== 'hotinfo' ? { textShadow: shadowValue } : undefined}
+          title={lang === 'en' ? 'Hot Info & Latest News' : 'Hot Info & Berita Terbaru'}
         >
-          <Flame className="w-3.5 h-3.5 text-yellow-500 fill-current animate-pulse" />
-          <span>{lang === 'en' ? 'Hot Info' : 'Hot Info & Berita'}</span>
+          <span className="relative flex items-center justify-center">
+            <Flame className="w-4 h-4 text-yellow-300 fill-current group-hover:scale-125 transition-transform duration-200" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-ping" />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full" />
+          </span>
+          <span className="font-orbitron tracking-wider text-[11px]">
+            {lang === 'en' ? 'Hot Info & News' : 'Hot Info & Berita'}
+          </span>
         </button>
 
         <button
