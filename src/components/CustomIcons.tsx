@@ -90,13 +90,11 @@ export const CornerBracket: React.FC<CornerBracketProps> = ({ type, className = 
   );
 };
 
-import sumbarLogoAsset from '../assets/logo_sumbar.png';
-
 export const PemprovSumbarLogo: React.FC<{ className?: string; size?: number | string }> = ({ className = '', size = 56 }) => {
   const widthStyle = typeof size === 'number' ? `${size}px` : size;
   return (
     <img
-      src={sumbarLogoAsset}
+      src="/logo_sumbar.png"
       alt="Logo Resmi Pemerintah Provinsi Sumatera Barat"
       style={{ width: widthStyle, height: 'auto' }}
       className={`inline-block filter drop-shadow-md object-contain select-none ${className}`}
