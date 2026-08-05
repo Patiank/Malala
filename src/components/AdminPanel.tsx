@@ -683,24 +683,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                 </div>
               </div>
 
-              {/* Pengaturan Musik / Audio MP3 Latar Halaman Awal */}
+              {/* Pengaturan Musik / Audio Latar Halaman Awal */}
               <div className="pt-4 border-t border-gray-200 space-y-3">
                 <label className="block text-[11px] font-bold uppercase text-gray-800 mb-1">
-                  🎵 Pengaturan Musik / Audio MP3 Latar Halaman Awal
+                  🎵 Pengaturan Musik & Audio Latar Halaman Awal (MP3, WAV, MPEG, OGG, M4A, AAC, FLAC)
                 </label>
                 <p className="text-[10px] text-gray-500 mb-3">
-                  Kelola lagu atau instrumen musik MP3 yang diputar pada pemutar audio halaman awal website.
+                  Kelola lagu atau instrumen musik dalam berbagai format audio (MP3, WAV, MPEG, OGG, M4A, AAC, FLAC, WebM) yang diputar pada pemutar audio halaman awal website.
                 </p>
 
-                {/* Upload File MP3 (Lokal) & URL Input */}
+                {/* Upload File Audio (Lokal) & URL Input */}
                 <div className="bg-white border border-gray-200 p-3 rounded-md space-y-3">
                   <div>
                     <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
-                      1. Upload File MP3 (Lokal)
+                      1. Upload File Audio Lokal (MP3, WAV, MPEG, OGG, M4A, AAC, FLAC, WebM)
                     </label>
                     <input
                       type="file"
-                      accept="audio/mp3,audio/*"
+                      accept="audio/*,.mp3,.wav,.mpeg,.ogg,.m4a,.aac,.flac,.webm"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
@@ -718,19 +718,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ dataStore }) => {
                       }}
                       className="w-full text-xs text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-700 cursor-pointer"
                     />
-                    <p className="text-[10px] text-gray-500 mt-1">Pilih file audio (.mp3) langsung dari perangkat Anda.</p>
+                    <p className="text-[10px] text-gray-500 mt-1">Pilih file audio (.mp3, .wav, .mpeg, .ogg, .m4a, .aac, .flac, .webm) langsung dari perangkat Anda.</p>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
-                      2. Atau Input URL Audio MP3 Direct Link
+                      2. Atau Input URL Audio Direct Link (MP3 / WAV / MPEG / OGG / M4A / AAC)
                     </label>
                     <input
                       type="text"
                       name="bgAudioUrl"
                       value={settingsFormData.bgAudioUrl}
                       onChange={(e) => setSettingsFormData(prev => ({ ...prev, bgAudioUrl: e.target.value }))}
-                      placeholder="https://example.com/musik_minang.mp3"
+                      placeholder="https://example.com/musik_minang.wav (atau .mp3 / .mpeg / .ogg / .m4a)"
                       className="w-full bg-white border border-gray-300 rounded p-2 text-xs font-mono"
                     />
                   </div>
