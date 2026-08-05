@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Flame } from 'lucide-react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -32,6 +32,25 @@ export default function App() {
   });
   const [toasts, setToasts] = useState<ToastNotice[]>([]);
   const dataStore = useData();
+
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseEnterHotInfo = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setActiveDrawer('hotinfo');
+  }, []);
+
+  const handleMouseLeaveHotInfo = useCallback(() => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveDrawer((prev) => (prev === 'hotinfo' ? null : prev));
+    }, 300);
+  }, []);
 
   // Sync lang to localStorage
   const handleToggleLang = useCallback(() => {
@@ -101,6 +120,8 @@ export default function App() {
       {/* Fixed Vertical Hot Info Trigger (Far Left) */}
       <button
         onClick={() => handleOpenDrawer('hotinfo')}
+        onMouseEnter={handleMouseEnterHotInfo}
+        onMouseLeave={handleMouseLeaveHotInfo}
         className={`fixed left-0 top-1/2 -translate-y-1/2 z-40 bg-red-600 hover:bg-black text-white transition-all duration-300 py-4 px-2.5 rounded-r-xl flex flex-col items-center gap-3 shadow-2xl group border border-l-0 border-red-700 hover:border-gray-900 cursor-pointer focus:outline-none select-none ${
           activeDrawer === 'hotinfo' ? 'bg-black ring-2 ring-red-500' : ''
         }`}
@@ -114,7 +135,7 @@ export default function App() {
         </span>
         <span
           className="font-orbitron font-extrabold text-[10px] sm:text-[11px] tracking-[0.2em] text-white uppercase select-none"
-          style={{ writingMode: 'vertical-lr' }}
+          style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
         >
           Hot Info & Berita Terbaru
         </span>
@@ -128,6 +149,8 @@ export default function App() {
         savedCount={savedIds.length}
         lang={lang}
         onToggleLang={handleToggleLang}
+        onMouseEnterHotInfo={handleMouseEnterHotInfo}
+        onMouseLeaveHotInfo={handleMouseLeaveHotInfo}
       />
 
       {/* Main Hero */}
@@ -142,6 +165,8 @@ export default function App() {
         onToggleSave={handleToggleSave}
         dataStore={dataStore}
         lang={lang}
+        onMouseEnterDrawer={handleMouseEnterHotInfo}
+        onMouseLeaveDrawer={handleMouseLeaveHotInfo}
       />
 
       {/* Toast Notifications */}

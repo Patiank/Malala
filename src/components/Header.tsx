@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bookmark, Sparkles, Download, Map, Globe, Menu, X } from 'lucide-react';
+import { Bookmark, Sparkles, Download, Map, Globe, Menu, X, Flame } from 'lucide-react';
 import { DrawerType } from '../types';
 import { Language, translations } from '../lib/translations';
 
@@ -10,6 +10,8 @@ interface HeaderProps {
   savedCount: number;
   lang: Language;
   onToggleLang: () => void;
+  onMouseEnterHotInfo?: () => void;
+  onMouseLeaveHotInfo?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({
   savedCount,
   lang,
   onToggleLang,
+  onMouseEnterHotInfo,
+  onMouseLeaveHotInfo,
 }) => {
   const t = translations[lang];
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -107,6 +111,20 @@ export const Header: React.FC<HeaderProps> = ({
         } md:flex flex-col md:flex-row absolute md:relative top-full left-0 w-full md:w-auto bg-white md:bg-transparent shadow-xl md:shadow-none p-4 md:p-0 gap-4 md:gap-[var(--gap-nav)] font-jakarta font-semibold uppercase tracking-[0.14em] sm:tracking-[0.18em] items-start md:items-center text-black border-t md:border-none border-gray-100 z-50`}
         style={{ fontSize: 'var(--nav)' }}
       >
+        <button
+          onClick={() => handleNavClick('hotinfo')}
+          onMouseEnter={onMouseEnterHotInfo}
+          onMouseLeave={onMouseLeaveHotInfo}
+          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${
+            activeDrawer === 'hotinfo'
+              ? 'bg-red-600 text-white border-red-600 font-bold'
+              : 'border-transparent text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600'
+          }`}
+        >
+          <Flame className="w-3.5 h-3.5 text-yellow-500 fill-current animate-pulse" />
+          <span>{lang === 'en' ? 'Hot Info' : 'Hot Info & Berita'}</span>
+        </button>
+
         <button
           onClick={() => handleNavClick('destinations')}
           className={`px-3 py-1.5 rounded-md border transition-all duration-200 cursor-pointer ${

@@ -9,7 +9,10 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "push:github": "git add . && git commit -m \"Update Malala app\" && git push origin main",
+    "push:firebase": "npm run build && npx firebase-tools deploy",
+    "deploy": "git add . && git commit -m \"Update Malala app\" && git push origin main && npm run build && npx firebase-tools deploy"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

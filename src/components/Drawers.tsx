@@ -220,6 +220,8 @@ interface DrawersProps {
   onToggleSave: (id: string, title: string) => void;
   dataStore: any;
   lang?: Language;
+  onMouseEnterDrawer?: () => void;
+  onMouseLeaveDrawer?: () => void;
 }
 
 export const Drawers: React.FC<DrawersProps> = ({
@@ -230,6 +232,8 @@ export const Drawers: React.FC<DrawersProps> = ({
   onToggleSave,
   dataStore,
   lang = 'id',
+  onMouseEnterDrawer,
+  onMouseLeaveDrawer,
 }) => {
   const {
     destinations, updateDestinations,
@@ -741,16 +745,26 @@ export const Drawers: React.FC<DrawersProps> = ({
           {/* Backdrop */}
           <div
             onClick={onClose}
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[60] transition-opacity duration-300 animate-fade-in cursor-pointer"
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs z-[60] animate-fade-backdrop cursor-pointer"
             aria-hidden="true"
           />
 
       {/* Drawer Outer Wrapper - TAKES UP HALF THE SCREEN (w-full md:w-1/2 lg:w-1/2) */}
       <div
+        onMouseEnter={() => {
+          if (activeDrawer === 'hotinfo' && onMouseEnterDrawer) {
+            onMouseEnterDrawer();
+          }
+        }}
+        onMouseLeave={() => {
+          if (activeDrawer === 'hotinfo' && onMouseLeaveDrawer) {
+            onMouseLeaveDrawer();
+          }
+        }}
         className={`fixed top-0 bottom-0 z-[70] w-full md:w-1/2 lg:w-1/2 bg-white shadow-2xl flex flex-col justify-between overflow-hidden transition-all duration-300 ${
           activeDrawer === 'hotinfo'
-            ? 'left-0 border-r border-gray-200'
-            : 'right-0 border-l border-gray-200'
+            ? 'left-0 border-r border-gray-200 animate-drawer-slide-left'
+            : 'right-0 border-l border-gray-200 animate-drawer-slide-right'
         }`}
       >
         
@@ -1609,12 +1623,13 @@ export const Drawers: React.FC<DrawersProps> = ({
               <div className="space-y-4">
                 {(dataStore.hotInfoItems && dataStore.hotInfoItems.length > 0 ? dataStore.hotInfoItems : HOT_INFO_ITEMS)
                   .filter((item: any) => hotInfoCategory === 'Semua' || item.category === hotInfoCategory)
-                  .map((item: any) => {
+                  .map((item: any, idx: number) => {
                     const isEn = lang === 'en';
                     return (
                       <div
                         key={item.id}
-                        className={`border rounded-lg overflow-hidden bg-white shadow-xs transition-all ${
+                        style={{ animationDelay: `${idx * 75}ms` }}
+                        className={`border rounded-lg overflow-hidden bg-white shadow-xs transition-all animate-content-stagger ${
                           item.tag === 'Penting' || item.isUrgent ? 'border-red-300 ring-1 ring-red-200' : 'border-gray-200 hover:border-black'
                         }`}
                       >
