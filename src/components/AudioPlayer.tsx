@@ -110,6 +110,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       window.removeEventListener('keydown', startPlayback);
       window.removeEventListener('touchstart', startPlayback);
     };
+  }, [currentTrack.url]);
+
   // Sync volume, timeupdate, and ended listeners
   useEffect(() => {
     const audio = audioRef.current;
