@@ -100,6 +100,9 @@ export function useData() {
         const effectiveHeroTextColor = localSettings?.heroTextColor || data.heroTextColor || '#000000';
         const effectiveHeroTextTheme = localSettings?.heroTextTheme || data.heroTextTheme || 'black';
         const effectiveHeroTextShadow = localSettings?.heroTextShadow !== undefined ? localSettings.heroTextShadow : (data.heroTextShadow !== undefined ? data.heroTextShadow : true);
+        const effectiveAudioUrl = localSettings?.bgAudioUrl || data.bgAudioUrl || '';
+        const effectiveAudioTitle = localSettings?.bgAudioTitle || data.bgAudioTitle || '';
+        const effectiveAudioAutoPlay = localSettings?.bgAudioAutoPlay !== undefined ? localSettings.bgAudioAutoPlay : (data.bgAudioAutoPlay !== undefined ? data.bgAudioAutoPlay : true);
 
         const mergedSettings: AppSettings = {
           bgMediaType: effectiveMediaType,
@@ -110,6 +113,9 @@ export function useData() {
           heroTextColor: effectiveHeroTextColor,
           heroTextTheme: effectiveHeroTextTheme,
           heroTextShadow: effectiveHeroTextShadow,
+          bgAudioUrl: effectiveAudioUrl,
+          bgAudioTitle: effectiveAudioTitle,
+          bgAudioAutoPlay: effectiveAudioAutoPlay,
         };
 
         setAppSettings(mergedSettings);
@@ -158,6 +164,9 @@ export function useData() {
         heroTextColor: newSettings.heroTextColor || '#000000',
         heroTextTheme: newSettings.heroTextTheme || 'black',
         heroTextShadow: newSettings.heroTextShadow !== undefined ? newSettings.heroTextShadow : true,
+        bgAudioUrl: newSettings.bgAudioUrl ? getDirectDriveUrl(newSettings.bgAudioUrl) : '',
+        bgAudioTitle: newSettings.bgAudioTitle || '',
+        bgAudioAutoPlay: newSettings.bgAudioAutoPlay !== undefined ? newSettings.bgAudioAutoPlay : true,
       };
       setAppSettings(formatted);
 
@@ -176,6 +185,8 @@ export function useData() {
         heroTextColor: formatted.heroTextColor,
         heroTextTheme: formatted.heroTextTheme,
         heroTextShadow: formatted.heroTextShadow,
+        bgAudioTitle: formatted.bgAudioTitle,
+        bgAudioAutoPlay: formatted.bgAudioAutoPlay,
       };
       if (formatted.baseImage && (!formatted.baseImage.startsWith('data:') || formatted.baseImage.length < 800000)) {
         firestorePayload.baseImage = formatted.baseImage;
@@ -185,6 +196,9 @@ export function useData() {
       }
       if (formatted.baseVideo && (!formatted.baseVideo.startsWith('data:') || formatted.baseVideo.length < 800000)) {
         firestorePayload.baseVideo = formatted.baseVideo;
+      }
+      if (formatted.bgAudioUrl && (!formatted.bgAudioUrl.startsWith('data:') || formatted.bgAudioUrl.length < 800000)) {
+        firestorePayload.bgAudioUrl = formatted.bgAudioUrl;
       }
 
       await setDoc(doc(db, 'settings', 'hero'), firestorePayload, { merge: true });

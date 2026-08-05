@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Music, Play, Pause, Volume2, VolumeX, Radio, ListMusic, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { Language } from '../lib/translations';
+import { getDirectDriveUrl } from '../data/content';
 
 interface AudioPlayerProps {
   lang: Language;
@@ -56,15 +57,16 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Active track determination
+  // Active track determination with direct drive URL conversion
+  const formattedCustomUrl = customAudioUrl ? getDirectDriveUrl(customAudioUrl) : '';
   const tracks = DEFAULT_TRACKS;
-  const currentTrack = customAudioUrl
+  const currentTrack = formattedCustomUrl
     ? {
         id: 'custom',
         title: customAudioTitle || (lang === 'en' ? 'Custom Background Audio' : 'Musik Latar Khas Sumbar'),
         titleEn: customAudioTitle || 'Custom Background Audio',
         artist: 'Dinas Pariwisata Sumbar',
-        url: customAudioUrl,
+        url: formattedCustomUrl,
       }
     : tracks[selectedTrackIndex];
 
