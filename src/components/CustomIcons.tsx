@@ -90,63 +90,121 @@ export const CornerBracket: React.FC<CornerBracketProps> = ({ type, className = 
   );
 };
 
-export const PemprovSumbarLogo: React.FC<{ className?: string; size?: number | string }> = ({ className = '', size = 52 }) => {
+export const PemprovSumbarLogo: React.FC<{ className?: string; size?: number | string }> = ({ className = '', size = 56 }) => {
   return (
     <svg
-      viewBox="0 0 100 120"
+      viewBox="0 0 320 370"
       style={{ width: typeof size === 'number' ? `${size}px` : size, height: 'auto' }}
       className={`inline-block filter drop-shadow-md ${className}`}
-      aria-label="Logo Pemerintah Provinsi Sumatera Barat"
+      aria-label="Logo Resmi Pemerintah Provinsi Sumatera Barat"
       role="img"
     >
-      {/* Outer Shield Outline */}
+      {/* 1. Outer Black Shield Border */}
       <path
-        d="M 50 5 L 90 25 C 90 75 75 105 50 115 C 25 105 10 75 10 25 Z"
-        fill="#047857"
-        stroke="#f59e0b"
+        d="M 20 10 L 300 10 L 282 340 L 160 365 L 38 340 Z"
+        fill="#000000"
+      />
+
+      {/* 2. White Margin Border */}
+      <path
+        d="M 26 16 L 294 16 L 277 335 L 160 359 L 43 335 Z"
+        fill="#ffffff"
+      />
+
+      {/* 3. Main Green Body Shield */}
+      <path
+        d="M 32 22 L 288 22 L 272 330 L 160 353 L 48 330 Z"
+        fill="#3ca655"
+      />
+
+      {/* 4. Top Red Banner Header */}
+      <path
+        d="M 32 22 L 288 22 L 282 66 L 38 66 Z"
+        fill="#ed1c24"
+        stroke="#ffffff"
         strokeWidth="3"
       />
-      {/* Inner Gold Shield Border */}
-      <path
-        d="M 50 10 L 85 28 C 85 72 71 100 50 109 C 29 100 15 72 15 28 Z"
-        fill="none"
-        stroke="#fbbf24"
-        strokeWidth="1.5"
-      />
 
-      {/* Rumah Gadang Gonjong Roof Peaks */}
-      {/* Center Peak */}
-      <path d="M 50 18 C 47 35 44 48 35 55 L 65 55 C 56 48 53 35 50 18 Z" fill="#b91c1c" stroke="#fbbf24" strokeWidth="1" />
-      {/* Left Outer Peak */}
-      <path d="M 22 28 C 26 42 32 50 38 55 L 20 55 C 22 45 22 36 22 28 Z" fill="#b91c1c" stroke="#fbbf24" strokeWidth="1" />
-      {/* Right Outer Peak */}
-      <path d="M 78 28 C 74 42 68 50 62 55 L 80 55 C 78 45 78 36 78 28 Z" fill="#b91c1c" stroke="#fbbf24" strokeWidth="1" />
-
-      {/* Gold Star at Top Center */}
-      <polygon
-        points="50,22 52,27 57,27 53,30 55,35 50,32 45,35 47,30 43,27 48,27"
-        fill="#fbbf24"
-      />
-
-      {/* Keris Minangkabau in Center */}
-      <path d="M 50 38 L 52 50 L 48 62 L 52 75 L 50 82 L 48 75 L 52 62 L 48 50 Z" fill="#fbbf24" stroke="#78350f" strokeWidth="0.8" />
-
-      {/* Padi & Kapas / Gelombang Water Waves */}
-      <path d="M 25 85 Q 50 75 75 85 Q 50 95 25 85 Z" fill="#1e3a8a" opacity="0.9" />
-      <path d="M 22 88 Q 50 96 78 88" stroke="#ffffff" strokeWidth="1.5" fill="none" />
-      <path d="M 28 93 Q 50 100 72 93" stroke="#fbbf24" strokeWidth="1.5" fill="none" />
-
-      {/* Tuah Sakato Text Ribbon at Base */}
-      <path d="M 24 98 Q 50 105 76 98 L 73 105 Q 50 111 27 105 Z" fill="#ffffff" stroke="#18181b" strokeWidth="0.8" />
+      {/* 5. Header Text SUMATERA BARAT */}
       <text
-        x="50"
-        y="104.5"
+        x="160"
+        y="53"
         textAnchor="middle"
-        fill="#000000"
-        fontSize="5"
+        fill="#fff200"
+        fontSize="24"
         fontWeight="900"
-        fontFamily="sans-serif"
-        letterSpacing="0.4"
+        fontFamily="'Plus Jakarta Sans', Arial, sans-serif"
+        letterSpacing="1.2"
+      >
+        SUMATERA BARAT
+      </text>
+
+      {/* 6. Yellow Star (Bintang Emas) */}
+      <polygon
+        points="160,78 163.5,88 174,88 165.5,94.5 168.5,105 160,98.5 151.5,105 154.5,94.5 146,88 156.5,88"
+        fill="#fff200"
+      />
+
+      {/* 7. Black Rumah Gadang Silhouette with 4 Sharp Curved Gonjong Roof Peaks */}
+      <path
+        d="M 68 112 C 72 170 88 190 120 205 
+           L 120 178 C 114 160 114 140 108 128
+           C 118 152 130 168 145 178
+           L 145 120 L 175 120 L 175 178
+           C 190 168 202 152 212 128
+           C 206 140 206 160 200 178
+           L 200 205 C 232 190 248 170 252 112
+           C 246 165 235 210 230 224
+           L 90 224 C 85 210 74 165 68 112 Z"
+        fill="#000000"
+      />
+
+      {/* 8. White Tiered Tower / Gonjong Mesjid in Center */}
+      {/* Tier 1 (Bottom Tier) */}
+      <path d="M 122 205 Q 160 190 198 205 L 190 190 Q 160 180 130 190 Z" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+      {/* Tier 2 (Middle Tier) */}
+      <path d="M 130 190 Q 160 176 190 190 L 182 174 Q 160 164 138 174 Z" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+      {/* Tier 3 (Top Tier Peak) */}
+      <path d="M 138 174 Q 160 152 182 174 C 172 152 166 138 160 115 C 154 138 148 152 138 174 Z" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+
+      {/* 9. Red Base Structure (Rumah Gadang Bottom Frame) */}
+      <rect x="94" y="215" width="132" height="32" rx="4" fill="#000000" stroke="#ed1c24" strokeWidth="4" />
+      <line x1="94" y1="231" x2="226" y2="231" stroke="#ed1c24" strokeWidth="3" />
+      <line x1="138" y1="215" x2="138" y2="247" stroke="#ed1c24" strokeWidth="3" />
+      <line x1="182" y1="215" x2="182" y2="247" stroke="#ed1c24" strokeWidth="3" />
+
+      {/* 10. 4 Parallel White Water Waves */}
+      <g stroke="#ffffff" strokeWidth="5" fill="none" strokeLinecap="round">
+        <path d="M 54 260 Q 80 250 106 260 T 158 260 T 210 260 T 266 260" />
+        <path d="M 54 272 Q 80 262 106 272 T 158 272 T 210 272 T 266 272" />
+        <path d="M 54 284 Q 80 274 106 284 T 158 284 T 210 284 T 266 284" />
+        <path d="M 54 296 Q 80 286 106 296 T 158 296 T 210 296 T 266 296" />
+      </g>
+
+      {/* 11. Yellow Scroll Ribbon at Bottom */}
+      <path
+        d="M 85 308 Q 160 326 235 308
+           C 255 308 255 332 235 332
+           Q 160 348 85 332
+           C 65 332 65 308 85 308 Z"
+        fill="#fff200"
+        stroke="#000000"
+        strokeWidth="3.5"
+      />
+      {/* Scroll End Flaps */}
+      <path d="M 85 308 C 70 308 75 328 85 332 C 95 328 92 312 85 308 Z" fill="#e6db00" stroke="#000000" strokeWidth="2" />
+      <path d="M 235 308 C 250 308 245 328 235 332 C 225 328 228 312 235 308 Z" fill="#e6db00" stroke="#000000" strokeWidth="2" />
+
+      {/* 12. Ribbon Motto Text TUAH SAKATO */}
+      <text
+        x="160"
+        y="329"
+        textAnchor="middle"
+        fill="#ed1c24"
+        fontSize="17"
+        fontWeight="900"
+        fontFamily="'Plus Jakarta Sans', Arial, sans-serif"
+        letterSpacing="2"
       >
         TUAH SAKATO
       </text>
