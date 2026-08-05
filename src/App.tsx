@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Flame } from 'lucide-react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
