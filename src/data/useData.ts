@@ -81,28 +81,36 @@ export function useData() {
     const unsubSett = onSnapshot(doc(db, 'settings', 'hero'), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data() as AppSettings;
-        if (data && (data.baseImage || data.revealImage || data.baseVideo)) {
-          // Check if local storage has custom uploaded media (data: URLs or custom URLs)
-          let hasLocalCustom = false;
+        if (data && (data.baseImage || data.revealImage || data.baseVideo || data.bgMediaType)) {
+          // Check if local storage has custom settings (including video background settings)
+          let localSettings: AppSettings | null = null;
           if (typeof window !== 'undefined') {
             try {
               const localSaved = localStorage.getItem('malala_app_settings');
               if (localSaved) {
-                const parsed = JSON.parse(localSaved);
-                if (parsed.baseImage?.startsWith('data:') || parsed.revealImage?.startsWith('data:') || parsed.baseVideo?.startsWith('data:')) {
-                  hasLocalCustom = true;
-                }
+                localSettings = JSON.parse(localSaved);
               }
             } catch (e) {}
           }
 
+          const hasLocalCustom = Boolean(
+            localSettings && (
+              localSettings.baseImage?.startsWith('data:') ||
+              localSettings.revealImage?.startsWith('data:') ||
+              localSettings.baseVideo?.startsWith('data:')
+            )
+          );
+
           if (!hasLocalCustom) {
             const fetched: AppSettings = {
-              bgMediaType: data.bgMediaType || 'image',
-              baseImage: data.baseImage ? getDirectDriveUrl(data.baseImage) : BG_IMAGE_1,
-              revealImage: data.revealImage ? getDirectDriveUrl(data.revealImage) : BG_IMAGE_2,
-              baseVideo: data.baseVideo || '',
-              allowedAdminEmails: data.allowedAdminEmails && data.allowedAdminEmails.length > 0 ? data.allowedAdminEmails : ['aldoaldiles@gmail.com'],
+              bgMediaType: localSettings?.bgMediaType || data.bgMediaType || 'image',
+              baseImage: data.baseImage ? getDirectDriveUrl(data.baseImage) : (localSettings?.baseImage || BG_IMAGE_1),
+              revealImage: data.revealImage ? getDirectDriveUrl(data.revealImage) : (localSettings?.revealImage || BG_IMAGE_2),
+              baseVideo: data.baseVideo || localSettings?.baseVideo || '',
+              allowedAdminEmails: data.allowedAdminEmails && data.allowedAdminEmails.length > 0 ? data.allowedAdminEmails : (localSettings?.allowedAdminEmails || ['aldoaldiles@gmail.com']),
+              heroTextColor: data.heroTextColor || localSettings?.heroTextColor || '#000000',
+              heroTextTheme: data.heroTextTheme || localSettings?.heroTextTheme || 'black',
+              heroTextShadow: data.heroTextShadow !== undefined ? data.heroTextShadow : (localSettings?.heroTextShadow !== undefined ? localSettings.heroTextShadow : true),
             };
             setAppSettings(fetched);
             if (typeof window !== 'undefined') {
@@ -148,6 +156,9 @@ export function useData() {
         revealImage: newSettings.revealImage ? getDirectDriveUrl(newSettings.revealImage) : BG_IMAGE_2,
         baseVideo: newSettings.baseVideo || '',
         allowedAdminEmails: newSettings.allowedAdminEmails && newSettings.allowedAdminEmails.length > 0 ? newSettings.allowedAdminEmails : ['aldoaldiles@gmail.com'],
+        heroTextColor: newSettings.heroTextColor || '#000000',
+        heroTextTheme: newSettings.heroTextTheme || 'black',
+        heroTextShadow: newSettings.heroTextShadow !== undefined ? newSettings.heroTextShadow : true,
       };
       setAppSettings(formatted);
 
@@ -163,6 +174,9 @@ export function useData() {
       const firestorePayload: any = {
         bgMediaType: formatted.bgMediaType,
         allowedAdminEmails: formatted.allowedAdminEmails,
+        heroTextColor: formatted.heroTextColor,
+        heroTextTheme: formatted.heroTextTheme,
+        heroTextShadow: formatted.heroTextShadow,
       };
       if (formatted.baseImage && (!formatted.baseImage.startsWith('data:') || formatted.baseImage.length < 800000)) {
         firestorePayload.baseImage = formatted.baseImage;
