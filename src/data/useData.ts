@@ -81,45 +81,44 @@ export function useData() {
     const unsubSett = onSnapshot(doc(db, 'settings', 'hero'), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data() as AppSettings;
-        if (data && (data.baseImage || data.revealImage || data.baseVideo || data.bgMediaType)) {
-          // Check if local storage has custom settings (including video background settings)
-          let localSettings: AppSettings | null = null;
-          if (typeof window !== 'undefined') {
-            try {
-              const localSaved = localStorage.getItem('malala_app_settings');
-              if (localSaved) {
-                localSettings = JSON.parse(localSaved);
-              }
-            } catch (e) {}
-          }
-
-          const hasLocalCustom = Boolean(
-            localSettings && (
-              localSettings.baseImage?.startsWith('data:') ||
-              localSettings.revealImage?.startsWith('data:') ||
-              localSettings.baseVideo?.startsWith('data:')
-            )
-          );
-
-          if (!hasLocalCustom) {
-            const fetched: AppSettings = {
-              bgMediaType: localSettings?.bgMediaType || data.bgMediaType || 'image',
-              baseImage: data.baseImage ? getDirectDriveUrl(data.baseImage) : (localSettings?.baseImage || BG_IMAGE_1),
-              revealImage: data.revealImage ? getDirectDriveUrl(data.revealImage) : (localSettings?.revealImage || BG_IMAGE_2),
-              baseVideo: data.baseVideo || localSettings?.baseVideo || '',
-              allowedAdminEmails: data.allowedAdminEmails && data.allowedAdminEmails.length > 0 ? data.allowedAdminEmails : (localSettings?.allowedAdminEmails || ['aldoaldiles@gmail.com']),
-              heroTextColor: data.heroTextColor || localSettings?.heroTextColor || '#000000',
-              heroTextTheme: data.heroTextTheme || localSettings?.heroTextTheme || 'black',
-              heroTextShadow: data.heroTextShadow !== undefined ? data.heroTextShadow : (localSettings?.heroTextShadow !== undefined ? localSettings.heroTextShadow : true),
-            };
-            setAppSettings(fetched);
-            if (typeof window !== 'undefined') {
-              try {
-                localStorage.setItem('malala_app_settings', JSON.stringify(fetched));
-              } catch (e) {
-                console.warn('Failed to save settings to localStorage:', e);
-              }
+        
+        let localSettings: AppSettings | null = null;
+        if (typeof window !== 'undefined') {
+          try {
+            const localSaved = localStorage.getItem('malala_app_settings');
+            if (localSaved) {
+              localSettings = JSON.parse(localSaved);
             }
+          } catch (e) {}
+        }
+
+        // Prioritize local user choices for media type and videos to prevent reverting during initial sync
+        const effectiveMediaType = localSettings?.bgMediaType || data.bgMediaType || 'image';
+        const effectiveBaseVideo = localSettings?.baseVideo || data.baseVideo || '';
+        const effectiveBaseImage = localSettings?.baseImage || (data.baseImage ? getDirectDriveUrl(data.baseImage) : BG_IMAGE_1);
+        const effectiveRevealImage = localSettings?.revealImage || (data.revealImage ? getDirectDriveUrl(data.revealImage) : BG_IMAGE_2);
+        const effectiveHeroTextColor = localSettings?.heroTextColor || data.heroTextColor || '#000000';
+        const effectiveHeroTextTheme = localSettings?.heroTextTheme || data.heroTextTheme || 'black';
+        const effectiveHeroTextShadow = localSettings?.heroTextShadow !== undefined ? localSettings.heroTextShadow : (data.heroTextShadow !== undefined ? data.heroTextShadow : true);
+
+        const mergedSettings: AppSettings = {
+          bgMediaType: effectiveMediaType,
+          baseImage: effectiveBaseImage,
+          revealImage: effectiveRevealImage,
+          baseVideo: effectiveBaseVideo,
+          allowedAdminEmails: data.allowedAdminEmails && data.allowedAdminEmails.length > 0 ? data.allowedAdminEmails : (localSettings?.allowedAdminEmails || ['aldoaldiles@gmail.com']),
+          heroTextColor: effectiveHeroTextColor,
+          heroTextTheme: effectiveHeroTextTheme,
+          heroTextShadow: effectiveHeroTextShadow,
+        };
+
+        setAppSettings(mergedSettings);
+
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem('malala_app_settings', JSON.stringify(mergedSettings));
+          } catch (e) {
+            console.warn('Failed to save merged settings to localStorage:', e);
           }
         }
       }
@@ -166,7 +165,7 @@ export function useData() {
         try {
           localStorage.setItem('malala_app_settings', JSON.stringify(formatted));
         } catch (e) {
-          console.warn('Failed to save settings to localStorage (quota exceeded or storage full):', e);
+          console.warn('Failed to save settings to localStorage:', e);
         }
       }
 
