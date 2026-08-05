@@ -280,10 +280,18 @@ export const InteractiveMapModal: React.FC<InteractiveMapModalProps> = ({
     }
 
     // Invalidate map size to render tiles correctly in modal container
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       map.invalidateSize();
     }, 200);
 
+    return () => {
+      clearTimeout(timer);
+      if (!isOpen && mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        markersLayerRef.current = null;
+      }
+    };
   }, [isOpen, activeFilter, destinations, cultureItems, culinaryItems, eventItems, isEn, lang, onSelectCulture, onSelectCulinary, onSelectDestination, onSelectEvent]);
 
   if (!isOpen) return null;

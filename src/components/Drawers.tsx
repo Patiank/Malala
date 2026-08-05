@@ -4,6 +4,7 @@ import { DrawerType, Destination, CultureItem, CulinaryItem, EventItem, FormAIRe
 import { AdminPanel } from './AdminPanel';
 import { InteractiveMapModal } from './InteractiveMapModal';
 import { Language, translations } from '../lib/translations';
+import { HOT_INFO_ITEMS, DOWNLOAD_ITEMS } from '../data/content';
 
 const triggerDownload = (filename: string, content: string, mimeType: string = 'application/octet-stream') => {
   if (!content) return;
@@ -78,139 +79,6 @@ export const getGoogleMapsUrl = (input?: string) => {
   }
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(trimmed)}`;
 };
-
-const HOT_INFO_ITEMS = [
-  {
-    id: 'hi1',
-    title: 'Peringatan Cuaca & Update Jalur Kelok 9',
-    category: 'Cuaca & Jalur',
-    date: 'Hari Ini, 16:30 WIB',
-    imageUrl: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=800&q=80',
-    content: 'Jalur utama Bukittinggi - Payakumbuh via Kelok 9 terpantau ramai lancar. BMKG Minangkabau memprakirakan potensi hujan ringan sore hingga malam hari. Pengendara diimbau berhati-hati.',
-    locationQuery: 'Kelok 9 Sumatera Barat',
-    isUrgent: true,
-  },
-  {
-    id: 'hi2',
-    title: 'Bazar Kuliner Rendang & Festival Budaya Minang 2026',
-    category: 'Event Mendatang',
-    date: '12 - 15 Agustus 2026',
-    imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80',
-    content: 'Pesta ragam olahan Rendang Minang dari 19 Kabupaten/Kota bertempat di Pelataran Jam Gadang Bukittinggi. Menampilkan 100 varian rendang dan pertunjukan musik Saluang & Pacu Jawi.',
-    locationQuery: 'Jam Gadang Bukittinggi',
-    isUrgent: false,
-  },
-  {
-    id: 'hi3',
-    title: 'Wisata Bahari Mentawai: Puncak Musim Surfing 2026',
-    category: 'Berita Utama',
-    date: 'Agustus - Oktober 2026',
-    imageUrl: 'https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=800&q=80',
-    content: 'Gelombang ombak kelas dunia di Pulau Sipora & Siberut Mentawai memasuki puncak musim surfing. Kapal Cepat Mentawai Fast melayani pelayaran reguler dari Pelabuhan Muaro Padang.',
-    locationQuery: 'Pelabuhan Muaro Padang',
-    isUrgent: false,
-  },
-  {
-    id: 'hi4',
-    title: 'Himbauan Pendakian & Rekomendasi Jalur Aman Gunung Marapi',
-    category: 'Himbauan Wisata',
-    date: 'Update Resmi BPBD',
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    content: 'Pendakian Gunung Marapi direkomendasikan terbatas hingga radius aman 3 km dari kawah utama. Wisatawan disarankan mengunjungi alternatif destinasi Lembah Harau dan Gunung Singgalang.',
-    locationQuery: 'Lembah Harau Sumatera Barat',
-    isUrgent: true,
-  },
-  {
-    id: 'hi5',
-    title: 'Peresmian Spot Glamping & Shuttle Listrik Harau Sky',
-    category: 'Berita Utama',
-    date: 'Agustus 2026',
-    imageUrl: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
-    content: 'Kawasan wisata Lembah Harau meresmikan 15 unit Glamping ramah lingkungan berlatar tebing granit 300m dengan armada shuttle listrik gratis untuk pengunjung.',
-    locationQuery: 'Lembah Harau Payakumbuh',
-    isUrgent: false,
-  },
-];
-
-const DOWNLOAD_ITEMS = [
-  {
-    id: 'dl1',
-    title: 'Logo Resmi MALALA & Pariwisata Sumbar',
-    category: 'Logo & Brand Kit',
-    type: 'SVG Package',
-    size: '1.2 MB',
-    description: 'Logo resmi Dinas Pariwisata Sumatera Barat & Logo Vektor MALALA (Format SVG High Resolution).',
-    filename: 'Logo_Resmi_Malala_Wisata_Sumbar.svg',
-    content: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
-  <rect width="800" height="400" fill="#000000"/>
-  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="#FFFFFF" font-family="sans-serif" font-weight="900" font-size="52" letter-spacing="8">MALALA˚</text>
-  <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" fill="#A1A1AA" font-family="sans-serif" font-weight="600" font-size="18" letter-spacing="4">WEST SUMATRA TOURISM BOARD</text>
-</svg>`,
-    mimeType: 'image/svg+xml'
-  },
-  {
-    id: 'dl2',
-    title: 'E-Booklet Panduan Pariwisata Sumbar 2026',
-    category: 'E-Booklet PDF',
-    type: 'Document PDF (24 Halaman)',
-    size: '4.8 MB',
-    description: 'Buku panduan digital resmi berisi peta destinasi, informasi budaya Minangkabau, ragam kuliner khas, dan tips perjalanan aman.',
-    filename: 'E-Booklet_Panduan_Wisata_Sumbar_2026.pdf',
-    content: `E-BOOKLET PANDUAN RESMI PARIWISATA SUMATERA BARAT 2026
-DINAS PARIWISATA PROVINSI SUMATERA BARAT
-
-1. DESTINASI UTAMA: Jam Gadang, Ngarai Sianok, Lembah Harau, Danau Maninjau, Istano Pagaruyung, Kepulauan Mentawai.
-2. BUDAYA & TRADISI: Rumah Gadang, Tari Piring, Pacu Jawi, Pencak Silat Kumango.
-3. KULINER: Rendang Daging, Sate Padang, Teh Talua, Ayam Pop, Dendeng Balado.`,
-    mimeType: 'application/pdf'
-  },
-  {
-    id: 'dl3',
-    title: 'Leaflet Peta Destinasi Wisata Ranah Minang',
-    category: 'Leaflet & Map',
-    type: 'Printable Map High-Res',
-    size: '3.2 MB',
-    description: 'Leaflet lipat memuat rute perjalanan, lokasi Rumah Makan Padang, dan titik koordinat objek wisata.',
-    filename: 'Leaflet_Peta_Destinasi_Sumbar.pdf',
-    content: `LEAFLET PETA WISATA SUMATERA BARAT 2026
-* Rute Jalur Utara: Padang -> Padang Panjang -> Bukittinggi -> Payakumbuh -> Lembah Harau.
-* Rute Jalur Selatan: Padang -> Mandeh -> Solok -> Danau Singkarak.
-* Rute Kepulauan: Pelabuhan Muaro Padang -> Kapal Cepat Mentawai Fast.`,
-    mimeType: 'application/pdf'
-  },
-  {
-    id: 'dl4',
-    title: 'Flyer Calendar of Events Pariwisata 2026',
-    category: 'Flyer Event',
-    type: 'HD Image & Calendar',
-    size: '2.5 MB',
-    description: 'Poster digital jadwal festival kebudayaan, perlombaan olahraga air, dan pagelaran musik tradisional.',
-    filename: 'Calendar_of_Events_Sumbar_2026.pdf',
-    content: `CALENDAR OF EVENTS SUMATERA BARAT 2026
-- Maret: Festival Pacu Jawi Tanah Datar
-- Mei: Mentawai Pro Surfing Championship
-- Juli: Festival Danau Singkarak & Tour de Singkarak
-- Agustus: Bazar Rendang & Pacu Itik Payakumbuh
-- Desember: Fest Malam Tahun Baru Jam Gadang Bukittinggi`,
-    mimeType: 'application/pdf'
-  },
-  {
-    id: 'dl5',
-    title: 'Infografis & Peta Kuliner Rendang Minang',
-    category: 'Infografis Kuliner',
-    type: 'Printable Infographic',
-    size: '2.1 MB',
-    description: 'Panduan peta rasa rendang dari 19 Kabupaten/Kota, filosofi bahan olahan kelapa & rempah khas Minang.',
-    filename: 'Peta_Kuliner_Rendang_Minang.pdf',
-    content: `PETA KULINER RENDANG MINANGKABAU
-1. Rendang Daging - Payakumbuh & Bukittinggi
-2. Rendang Lokan (Kerang) - Pesisir Selatan
-3. Rendang Belut - Tanah Datar
-4. Rendang Itik - Agam
-5. Rendang Pakis & Jamur - Solok`,
-    mimeType: 'application/pdf'
-  }
-];
 
 interface DrawersProps {
   activeDrawer: DrawerType;

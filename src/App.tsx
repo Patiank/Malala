@@ -52,6 +52,14 @@ export default function App() {
     }, 300);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   // Sync lang to localStorage
   const handleToggleLang = useCallback(() => {
     setLang((prev) => {

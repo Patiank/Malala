@@ -67,22 +67,15 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
     window.addEventListener('touchstart', handleTouchMove, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
-    // Offscreen canvas for mask generation
-    const offCanvas = document.createElement('canvas');
     let width = window.innerWidth;
     let height = window.innerHeight;
-    offCanvas.width = width;
-    offCanvas.height = height;
-    const ctx = offCanvas.getContext('2d');
 
-    const updateCanvasSize = () => {
+    const updateSize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      offCanvas.width = width;
-      offCanvas.height = height;
     };
 
-    window.addEventListener('resize', updateCanvasSize);
+    window.addEventListener('resize', updateSize);
 
     let animId: number;
     let autoAngle = 0;
@@ -107,30 +100,10 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
 
       const radius = Math.round(Math.min(750, Math.max(220, window.innerWidth * 0.32)));
 
-      if (ctx) {
-        ctx.clearRect(0, 0, width, height);
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-        grad.addColorStop(0, 'rgba(255,255,255,1)');
-        grad.addColorStop(0.4, 'rgba(255,255,255,1)');
-        grad.addColorStop(0.6, 'rgba(255,255,255,0.75)');
-        grad.addColorStop(0.75, 'rgba(255,255,255,0.4)');
-        grad.addColorStop(0.88, 'rgba(255,255,255,0.12)');
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        const dataUrl = offCanvas.toDataURL();
-        if (revealRef.current) {
-          revealRef.current.style.maskImage = `url(${dataUrl})`;
-          revealRef.current.style.webkitMaskImage = `url(${dataUrl})`;
-          revealRef.current.style.maskSize = '100% 100%';
-          revealRef.current.style.webkitMaskSize = '100% 100%';
-          revealRef.current.style.maskRepeat = 'no-repeat';
-          revealRef.current.style.webkitMaskRepeat = 'no-repeat';
-        }
+      if (revealRef.current) {
+        const maskStr = `radial-gradient(circle ${radius}px at ${cx}px ${cy}px, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0.75) 60%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0.12) 88%, rgba(0,0,0,0) 100%)`;
+        revealRef.current.style.maskImage = maskStr;
+        revealRef.current.style.webkitMaskImage = maskStr;
       }
 
       const normX = (cx / (width || 1)) - 0.5;
@@ -153,7 +126,7 @@ export const ImageRevealBackground: React.FC<ImageRevealBackgroundProps> = ({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchstart', handleTouchMove);
       window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('resize', updateCanvasSize);
+      window.removeEventListener('resize', updateSize);
       cancelAnimationFrame(animId);
     };
   }, [isVideo]);
