@@ -86,6 +86,7 @@ export const CornerBracket: React.FC<CornerBracketProps> = ({ type, className = 
       aria-hidden="true"
     >
       <path d={paths[type]} />
+    </svg>
   );
 };
 
