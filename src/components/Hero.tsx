@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Sparkles, Compass, Download, Map, X } from 'lucide-react';
-import { CheckerboardGrid, WireframeGlobe, CornerBracket } from './CustomIcons';
+import { CheckerboardGrid, WireframeGlobe, CornerBracket, PemprovSumbarLogo } from './CustomIcons';
 import { DrawerType, AppSettings } from '../types';
 import { Language, translations } from '../lib/translations';
 
@@ -137,8 +137,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenDrawer, lang, appSettings }) =
 
           {/* Official Tourism Board Metadata */}
           <div className="flex flex-col space-y-4">
-            <div style={{ color: heroTextColor }} className="flex items-center justify-between transition-colors duration-300">
-              <WireframeGlobe />
+            <div className="flex items-center justify-between transition-colors duration-300">
+              <PemprovSumbarLogo size={48} />
             </div>
 
             <div

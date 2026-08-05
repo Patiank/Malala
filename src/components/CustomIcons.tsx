@@ -86,6 +86,69 @@ export const CornerBracket: React.FC<CornerBracketProps> = ({ type, className = 
       aria-hidden="true"
     >
       <path d={paths[type]} />
+  );
+};
+
+export const PemprovSumbarLogo: React.FC<{ className?: string; size?: number | string }> = ({ className = '', size = 52 }) => {
+  return (
+    <svg
+      viewBox="0 0 100 120"
+      style={{ width: typeof size === 'number' ? `${size}px` : size, height: 'auto' }}
+      className={`inline-block filter drop-shadow-md ${className}`}
+      aria-label="Logo Pemerintah Provinsi Sumatera Barat"
+      role="img"
+    >
+      {/* Outer Shield Outline */}
+      <path
+        d="M 50 5 L 90 25 C 90 75 75 105 50 115 C 25 105 10 75 10 25 Z"
+        fill="#047857"
+        stroke="#f59e0b"
+        strokeWidth="3"
+      />
+      {/* Inner Gold Shield Border */}
+      <path
+        d="M 50 10 L 85 28 C 85 72 71 100 50 109 C 29 100 15 72 15 28 Z"
+        fill="none"
+        stroke="#fbbf24"
+        strokeWidth="1.5"
+      />
+
+      {/* Rumah Gadang Gonjong Roof Peaks */}
+      {/* Center Peak */}
+      <path d="M 50 18 C 47 35 44 48 35 55 L 65 55 C 56 48 53 35 50 18 Z" fill="#b91c1c" stroke="#fbbf24" strokeWidth="1" />
+      {/* Left Outer Peak */}
+      <path d="M 22 28 C 26 42 32 50 38 55 L 20 55 C 22 45 22 36 22 28 Z" fill="#b91c1c" stroke="#fbbf24" strokeWidth="1" />
+      {/* Right Outer Peak */}
+      <path d="M 78 28 C 74 42 68 50 62 55 L 80 55 C 78 45 78 36 78 28 Z" fill="#b91c1c" stroke="#fbbf24" strokeWidth="1" />
+
+      {/* Gold Star at Top Center */}
+      <polygon
+        points="50,22 52,27 57,27 53,30 55,35 50,32 45,35 47,30 43,27 48,27"
+        fill="#fbbf24"
+      />
+
+      {/* Keris Minangkabau in Center */}
+      <path d="M 50 38 L 52 50 L 48 62 L 52 75 L 50 82 L 48 75 L 52 62 L 48 50 Z" fill="#fbbf24" stroke="#78350f" strokeWidth="0.8" />
+
+      {/* Padi & Kapas / Gelombang Water Waves */}
+      <path d="M 25 85 Q 50 75 75 85 Q 50 95 25 85 Z" fill="#1e3a8a" opacity="0.9" />
+      <path d="M 22 88 Q 50 96 78 88" stroke="#ffffff" strokeWidth="1.5" fill="none" />
+      <path d="M 28 93 Q 50 100 72 93" stroke="#fbbf24" strokeWidth="1.5" fill="none" />
+
+      {/* Tuah Sakato Text Ribbon at Base */}
+      <path d="M 24 98 Q 50 105 76 98 L 73 105 Q 50 111 27 105 Z" fill="#ffffff" stroke="#18181b" strokeWidth="0.8" />
+      <text
+        x="50"
+        y="104.5"
+        textAnchor="middle"
+        fill="#000000"
+        fontSize="5"
+        fontWeight="900"
+        fontFamily="sans-serif"
+        letterSpacing="0.4"
+      >
+        TUAH SAKATO
+      </text>
     </svg>
   );
 };
